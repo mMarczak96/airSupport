@@ -1,4 +1,5 @@
 from cgitb import reset
+from turtle import filling
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -21,10 +22,17 @@ def parse_args():
 #     airfoil = args.airfoil 
 
 
-Naca = Airfoil("naca0018", settings.A, settings.T, settings.N)
+Naca = Airfoil("NACA0018", settings.A, settings.T, settings.N)
 LE = Naca.airfoil_coord(Naca.A, Naca.T, Naca.n)
-# TE = Naca.roundedTE(settings.NT, settings.ST, settings.ET, LE)
-# foil = Naca.mergeFoil(LE, TE)
-# pwd =os.getcwd() + '/' + Naca.name + "_"
-# Naca.printSalomeFoil(pwd, foil)
+TE = Naca.roundedTE(settings.NT, settings.ST, settings.ET, LE)
+
+LE_salome = Naca.airfoil_salome(LE)
+TE_salome = Naca.TE_salome(TE)
+fullFoilSal = Naca.mergeSalomeFoil(LE_salome, TE_salome)
+#print(fullFoilSal)
+mergedFoil = Naca.mergeFoil(LE,TE)
+Naca.drawFoil(mergedFoil)
+Naca.writeFoilToSalomeFile(fullFoilSal)
+
+
 

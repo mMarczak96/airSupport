@@ -1,8 +1,13 @@
 from cgitb import reset
+from turtle import color
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import os
+import sys
+# import salome
+# salome.salome_init()
+# import salome_notebook
 
 class Airfoil:
     A = None
@@ -31,10 +36,15 @@ class Airfoil:
         foil_Pts['Y'] = T / 0.2 *( a0 * pow(foil_Pts['X'],0.5) + a1 * foil_Pts['X'] + a2 * pow(foil_Pts['X'],2) + a3 * pow(foil_Pts['X'],3) + a4 * pow(foil_Pts['X'],4) )
         foil_Pts['Z'] = 0
         foil_Pts['sal_form'] = 'geompy.MakeVertex( ' + foil_Pts['X'].astype(str) + ', ' + foil_Pts['Y'].astype(str) + ', ' + foil_Pts['Z'].astype(str) + " )"
-        salFormFoil = foil_Pts['sal_form']
+        #print(SAL_foil)
+
+        return foil_Pts
+
+    def airfoil_salome(self, foil_pts_df):
+        salFormFoil = foil_pts_df['sal_form']
         SAL_foil_whole = np.array(salFormFoil)
         SAL_foil = SAL_foil_whole[:-1]
-        print(SAL_foil)
+
         return SAL_foil
 
     def roundedTE(self, nT, sT, eT, foilDF):
@@ -48,16 +58,38 @@ class Airfoil:
         TE_Pts.iat[-1,3] = 0.0
         TE_Pts['Z'] = 0
         TE_Pts['sal_form'] = 'geompy.MakeVertex( ' + TE_Pts['X'].astype(str) + ', ' + TE_Pts['Y'].astype(str) + ', ' + TE_Pts['Z'].astype(str) + " )"
-        salFormTE = TE_Pts['sal_form']
-        SAL_TE = np.array(salFormTE)
         
-        return SAL_TE
+        return TE_Pts
 
-    def mergeFoil(self, foil, TE):
-        fullSalFoil = np.append(foil, TE)
+    def TE_salome(self, TE_df):
+        salFormTE = TE_df['sal_form']
+        SAL_TE = np.array(salFormTE) 
 
-        return fullSalFoil
+        return SAL_TE       
+    
+    def mergeSalomeFoil(self, LE_salome, TE_salome):
+        fullSalomeFoil = np.append(LE_salome, TE_salome)
 
+        return fullSalomeFoil
+    
+    def mergeFoil(self, LE_df, TE_df):
+        fullFoil = LE_df.append(TE_df)
+
+        return fullFoil
+
+    def drawFoil(self, merged_df):
+        foilFig = plt.figure(figsize=(20,5))
+        plt.title('{} - {} points'.format(self.name, 2 * len(merged_df['X'])))
+        plt.scatter(merged_df['X'], merged_df['Y'], color='k')
+        plt.scatter(merged_df['X'], -merged_df['Y'], color='k')
+        plt.show()
+
+    def writeFoilToSalomeFile(self, fullSalomeFoil):
+    
+        with open(os.path.join(os.getcwd() + '/foilScripts/', "{}_gen.py".format(self.name)), 'w') as gen:
+            gen.write(
+                str(fullSalomeFoil)
+            )
 
     @staticmethod
     def prepend_line(file_name, line):
