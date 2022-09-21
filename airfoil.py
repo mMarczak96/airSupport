@@ -5,6 +5,8 @@ import numpy as np
 import pandas as pd
 import os
 import sys
+import pyvista as pv 
+
 # import salome
 # salome.salome_init()
 # import salome_notebook
@@ -21,6 +23,43 @@ class Airfoil:
         self.T = T
         self.n = n
         
+    def foil_cords(self, A, T, n):
+        a0 = 0.2969
+        a1 = -0.126
+        a2 = -0.3516
+        a3 = 0.2843
+        a4 = -0.1015
+        delta_deg = 180 / n
+        lst_deg = np.arange(start = 0, stop = 180.000001, step = delta_deg)
+        foil_Pts = pd.DataFrame(lst_deg, columns = ['deg'])
+        foil_Pts['rad'] = foil_Pts['deg'] * 0.0174532925
+        foil_Pts['X'] = (1 - np.cos(foil_Pts['rad'])) / 2
+        foil_Pts['Y'] = T / 0.2 *( a0 * pow(foil_Pts['X'],0.5) + a1 * foil_Pts['X'] + a2 * pow(foil_Pts['X'],2) + a3 * pow(foil_Pts['X'],3) + a4 * pow(foil_Pts['X'],4) )
+        foil_Pts['Z'] = 0
+
+        foil_Pts_min = pd.DataFrame(lst_deg, columns = ['deg'])
+        foil_Pts_min['rad'] = foil_Pts['deg'] * 0.0174532925
+        foil_Pts_min['X'] = (1 - np.cos(foil_Pts['rad'])) / 2
+        foil_Pts_min['Y'] = -T / 0.2 *( a0 * pow(foil_Pts['X'],0.5) + a1 * foil_Pts['X'] + a2 * pow(foil_Pts['X'],2) + a3 * pow(foil_Pts['X'],3) + a4 * pow(foil_Pts['X'],4) )
+        foil_Pts_min['Z'] = 0
+
+        fullPts = foil_Pts.append(foil_Pts_min)
+        PVcords = np.column_stack((fullPts['X'], fullPts['Y'], fullPts['Z']))
+
+        return PVcords
+
+    def create_STL_foil(self, coords):
+        poly = pv.PolyData()
+        poly.points = coords
+        cells = np.full((len(coords) - 1, 3), 2, dtype=np.int_)
+        cells[:, 1] = np.arange(0, len(coords) - 1, dtype=np.int_)
+        cells[:, 2] = np.arange(1, len(coords), dtype=np.int_)
+        poly.lines = cells
+        foil_curve = poly
+        foil_curve.plot(line_width=5)
+        foil_curve = pv.Spline(coords, 1000)      
+        foil_STL = foil_curve.extrude([0, 0, 1], capping=False)
+        foil_STL.save('{}.stl'.format(self.name))
 
     def airfoil_coord(self, A, T, n):
         a0 = 0.2969
@@ -73,7 +112,10 @@ class Airfoil:
         return fullSalomeFoil
     
     def mergeFoil(self, LE_df, TE_df):
-        fullFoil = LE_df.append(TE_df)
+        upFoil = LE_df.append(TE_df)
+        downFoil = upFoil
+        downFoil['Y'] = downFoil['Y'] * (-1)
+        fullFoil = upFoil.append(downFoil)
 
         return fullFoil
 
@@ -82,6 +124,7 @@ class Airfoil:
         plt.title('{} - {} points'.format(self.name, 2 * len(merged_df['X'])))
         plt.scatter(merged_df['X'], merged_df['Y'], color='k')
         plt.scatter(merged_df['X'], -merged_df['Y'], color='k')
+        plt.grid()
         plt.show()
 
     def writeFoilToSalomeFile(self, fullSalomeFoil):
@@ -110,4 +153,16 @@ class Airfoil:
 
     def printSalomeFoil(self, path, coords):
         np.savetxt(path + "foilGen" + ".py", coords, fmt='%s')
+
+    @staticmethod
+    def lines_from_points(points):
+        poly = pv.PolyData()
+        poly.points = points
+        cells = np.full((len(points) - 1, 3), 2, dtype=np.int_)
+        cells[:, 1] = np.arange(0, len(points) - 1, dtype=np.int_)
+        cells[:, 2] = np.arange(1, len(points), dtype=np.int_)
+        poly.lines = cells
+
+        return poly
+
 
