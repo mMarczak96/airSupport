@@ -6,11 +6,11 @@ import pandas as pd
 import os
 import sys
 import pyvista as pv 
-
+from subprocess import PIPE, run
 # import salome
 # salome.salome_init()
 # import salome_notebook
-
+#triSurf().writeFms(‘domain.fms’) 
 class Airfoil:
     A = None
     T = None 
@@ -22,8 +22,32 @@ class Airfoil:
         self.A = A 
         self.T = T
         self.n = n
-        
-    def foil_cords(self, A, T, n):
+
+    def run_cmd(self, command : str):
+        """
+        run a command and return its output
+        """
+        return run(
+            command, 
+            stdout=PIPE, 
+            stderr=PIPE, 
+            universal_newlines=True, 
+            shell=True
+        )
+
+    def nameSTLpart(self, name: str, file: str):
+        cwd=os.getcwd()
+        nameStart = f'sed -i "/solid Visualization Toolkit generated SLA File/c solid {name} " {cwd}/geometry/{file}.stl'
+
+        return nameStart
+
+    def nameSTLpartEnd(self, name: str, file: str):
+        cwd=os.getcwd()
+        nameEnd = f'sed -i "/endsolid/c endsolid {name} " {cwd}/geometry/{file}.stl'
+
+        return nameEnd
+
+    def foil_cords_plus(self, A, T, n):
         a0 = 0.2969
         a1 = -0.126
         a2 = -0.3516
@@ -37,16 +61,45 @@ class Airfoil:
         foil_Pts['Y'] = T / 0.2 *( a0 * pow(foil_Pts['X'],0.5) + a1 * foil_Pts['X'] + a2 * pow(foil_Pts['X'],2) + a3 * pow(foil_Pts['X'],3) + a4 * pow(foil_Pts['X'],4) )
         foil_Pts['Z'] = 0
 
-        foil_Pts_min = pd.DataFrame(lst_deg, columns = ['deg'])
-        foil_Pts_min['rad'] = foil_Pts['deg'] * 0.0174532925
-        foil_Pts_min['X'] = (1 - np.cos(foil_Pts['rad'])) / 2
-        foil_Pts_min['Y'] = -T / 0.2 *( a0 * pow(foil_Pts['X'],0.5) + a1 * foil_Pts['X'] + a2 * pow(foil_Pts['X'],2) + a3 * pow(foil_Pts['X'],3) + a4 * pow(foil_Pts['X'],4) )
-        foil_Pts_min['Z'] = 0
+        return foil_Pts
 
-        fullPts = foil_Pts.append(foil_Pts_min)
-        PVcords = np.column_stack((fullPts['X'], fullPts['Y'], fullPts['Z']))
+    def foil_cords_min(self, A, T, n):
+        a0 = 0.2969
+        a1 = -0.126
+        a2 = -0.3516
+        a3 = 0.2843
+        a4 = -0.1015
+        delta_deg = 180 / n
+        lst_deg = np.arange(start = 0, stop = 180.000001, step = delta_deg)
+        foil_Pts = pd.DataFrame(lst_deg, columns = ['deg'])
+        foil_Pts['rad'] = foil_Pts['deg'] * 0.0174532925
+        foil_Pts['X'] = (1 - np.cos(foil_Pts['rad'])) / 2
+        foil_Pts['Y'] = -T / 0.2 *( a0 * pow(foil_Pts['X'],0.5) + a1 * foil_Pts['X'] + a2 * pow(foil_Pts['X'],2) + a3 * pow(foil_Pts['X'],3) + a4 * pow(foil_Pts['X'],4) )
+        foil_Pts['Z'] = 0
+        foil_Pts = foil_Pts[::-1]
 
-        return PVcords
+        return foil_Pts
+
+    def roundedTE(self, nT, sT, eT, foilDF):
+        degTE = eT - sT
+        delta_degTE = degTE / nT 
+        lst_degTE = np.arange(start = sT, stop = eT + 0.0001, step = delta_degTE)
+        TE_Pts = pd.DataFrame(lst_degTE, columns = ['deg'])
+        TE_Pts['rad'] = TE_Pts['deg'] * 0.0174532925
+        TE_Pts['X'] = np.sin(TE_Pts['rad']) * ((foilDF['Y'].iloc[-2] + foilDF['Y'].iloc[-1])/2) + ((foilDF['X'].iloc[-2] + foilDF['X'].iloc[-1])/2)
+        TE_Pts['Y'] = np.cos(TE_Pts['rad']) * 0.00189
+        TE_Pts.iat[-1,3] = 0.0
+        TE_Pts['Z'] = 0
+
+        
+        return TE_Pts
+
+    def mergeFoilPts(self, plusPts, minPts, TePts):
+        PTS = plusPts.append(TePts)
+        PTS = PTS.append(minPts)
+        PTS_pv = np.column_stack((PTS['X'], PTS['Y'], PTS['Z']))
+
+        return PTS_pv
 
     def create_STL_foil(self, coords):
         poly = pv.PolyData()
@@ -55,11 +108,16 @@ class Airfoil:
         cells[:, 1] = np.arange(0, len(coords) - 1, dtype=np.int_)
         cells[:, 2] = np.arange(1, len(coords), dtype=np.int_)
         poly.lines = cells
-        foil_curve = poly
-        foil_curve.plot(line_width=5)
         foil_curve = pv.Spline(coords, 1000)      
         foil_STL = foil_curve.extrude([0, 0, 1], capping=False)
-        foil_STL.save('{}.stl'.format(self.name))
+        foil_STL = foil_STL.translate([-0.5,0,0])
+        cwd = os.getcwd()
+        foil_STL.save('{}/geometry/{}.stl'.format(cwd, self.name), binary=False)
+        name = self.name
+        self.run_cmd(self.nameSTLpart('Foil', name))
+        self.run_cmd(self.nameSTLpartEnd('Foil', name))
+
+        return foil_STL
 
     def airfoil_coord(self, A, T, n):
         a0 = 0.2969
@@ -85,20 +143,6 @@ class Airfoil:
         SAL_foil = SAL_foil_whole[:-1]
 
         return SAL_foil
-
-    def roundedTE(self, nT, sT, eT, foilDF):
-        degTE = eT - sT
-        delta_degTE = degTE / nT 
-        lst_degTE = np.arange(start = sT, stop = eT + 0.0001, step = delta_degTE)
-        TE_Pts = pd.DataFrame(lst_degTE, columns = ['deg'])
-        TE_Pts['rad'] = TE_Pts['deg'] * 0.0174532925
-        TE_Pts['X'] = np.sin(TE_Pts['rad']) * ((foilDF['Y'].iloc[-2] + foilDF['Y'].iloc[-1])/2) + ((foilDF['X'].iloc[-2] + foilDF['X'].iloc[-1])/2)
-        TE_Pts['Y'] = np.cos(TE_Pts['rad']) * 0.00189
-        TE_Pts.iat[-1,3] = 0.0
-        TE_Pts['Z'] = 0
-        TE_Pts['sal_form'] = 'geompy.MakeVertex( ' + TE_Pts['X'].astype(str) + ', ' + TE_Pts['Y'].astype(str) + ', ' + TE_Pts['Z'].astype(str) + " )"
-        
-        return TE_Pts
 
     def TE_salome(self, TE_df):
         salFormTE = TE_df['sal_form']

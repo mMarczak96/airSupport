@@ -1,10 +1,5 @@
-from cgitb import reset
-import matplotlib.pyplot as plt
-import numpy as np
-import pandas as pd
-import os
-from airfoil import Airfoil
-import argparse
+# SIMULATION SETTINGS
+Uinlet = 10 # m/s
 
 # AIRFOIL SETTINGS:
 A = 0 #NACA0018
