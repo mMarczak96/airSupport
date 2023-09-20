@@ -16,6 +16,9 @@ import geometry as geom
 import mesh 
 import pathlib
 import subprocess
+import physics
+import postProc 
+
 def parse_args():
     parser = argparse.ArgumentParser()
     cwd = os.getcwd()
@@ -49,26 +52,157 @@ if __name__ == '__main__':
     for action in actions:
 
         if action == 'foil':
-            Naca = Airfoil('NACA{}'.format(foil), settings.A, settings.T, settings.N)
 
+            print('----------------------------------------------------------------------------------------')
+            print(f'Creating NACA{foil} geometry')
+            print('----------------------------------------------------------------------------------------')
+
+            Re = physics.Re(settings.ro, settings.Uinlet, settings.c, settings.visc)
+            Naca = Airfoil('NACA{}'.format(foil), settings.A, settings.T, settings.N)
             plus = Naca.foil_cords_plus(settings.A, settings.T, settings.N)
-            min = Naca.foil_cords_min(settings.A, settings.T, settings.N)
+            # min = Naca.foil_cords_min(settings.A, settings.T, settings.N)
             te = Naca.roundedTE(settings.NT, settings.ST, settings.ET, plus)
-            cords = Naca.mergeFoilPts(plus, min, te)
+
+            up = pd.concat([plus, te])    
+            down = pd.concat([plus, te])    
+
+            down['Y'] = down['Y'] * (-1)
+            down = down.iloc[::-1]
+                        
+            cords, PTS = Naca.mergeFoilPts(up, down)
+            plt.scatter(PTS['X'],PTS['Y'])
             Naca.create_STL_foil(cords)
+
             c=1
             geom.sides(c, 'Sides')
             geom.arcInlet(c, 'Inlet')
-            geom.outlet(c, 'Outlet')
-            geom.groupedSTLdomain('NACA0018','Inlet','Sides','Outlet')
+            geom.groupedSTLdomain(f'NACA{foil}','Inlet','Sides','Outlet')
+            
+            file_path = f"/home/maciek/repository/airSupport/geometry/domain_NACA{foil}.stl"
+
+            # Step 1: Open the text file in read mode
+            with open(file_path, 'r') as file:
+                # Step 2: Read the contents of the file
+                content = file.read()
+
+            # Step 3: Replace all commas with dots
+            modified_content = content.replace(',', '.')
+
+            # Step 4: Open the same file in write mode
+            with open(file_path, 'w') as file:
+                # Step 5: Write the modified contents back into the file
+                file.write(modified_content)    
+
+        if action == 'AoA_single':
+
+            print('----------------------------------------------------------------------------------------')
+            print(f'Starting single angle of attack simulation. AoA range: {settings.AoA_single}, Re: {Re}, Turbulence model: {settings.turbModel}')
+            print('----------------------------------------------------------------------------------------')
+
             copyOFtemp = f'cp -r {cwd}/template {cwd}/run'
-            changeOFdir = f'mv {cwd}/run/template {cwd}/run/NACA{foil}'
+            changeOFdir = f'mv {cwd}/run/template {cwd}/run/NACA{foil}_AoA{settings.AoA_single}_{settings.turbModel}'
             run_cmd(copyOFtemp)
             run_cmd(changeOFdir)
-            mesh.create_cfMeshDict('NACA0018')
+            mesh.create_cfMeshDict(f'NACA{foil}')
             os.system('cp {}/geometry/domain_NACA{}.stl {}/run/NACA{}'.format(cwd, foil, cwd, foil))
             os.system('mv {}/run/NACA{}/domain_NACA{}.stl {}/run/NACA{}/domain.stl'.format(cwd,foil,foil,cwd,foil))
             os.system('sed -i "/internalField   uniform (0 0 0);/c internalField   uniform ({} 0 0); " {}/run/NACA{}/0/U'
                 .format(settings.Uinlet, cwd, foil))
-            os.system('./run/NACA{}/run.sh'.format(foil))
-            
+            os.system('cd run/NACA{} && ./run_mesh.sh'.format(foil))
+            os.system('cd run/NACA{} && ./run_simulation.sh'.format(foil))
+
+            #Postprocessing stage
+            postProc.plot_OF_aero_postProc(foil,'steady')
+            postProc.aeroData_to_HDF(foil, int(Re), settings.Type, settings.turbModel)
+
+
+        if action == 'AoA_range':
+
+            print('----------------------------------------------------------------------------------------')
+            print(f'Starting multiple angle of attack simulation. AoA range: {settings.AoA_range}, Re: {Re}, Turbulence model: {settings.turbModel}')
+            print('----------------------------------------------------------------------------------------')
+
+            AoA_dir = f'{cwd}/run/NACA{foil}_AoA[{settings.AoA_range.min()}-{settings.AoA_range.max()}]_{settings.turbModel}'
+            # os.system(f'mkdir {AoA_dir}')
+            # copyOFtemp = f'cp -r {cwd}/template {AoA_dir}'
+            copyOFtemp = f'cp -r {cwd}/template {cwd}/run'
+            run_cmd(copyOFtemp)
+            changeOFdir = f'mv run/template {AoA_dir}'
+            run_cmd(changeOFdir)
+
+            # Calculate AoA velocity BC df
+            AoA_df = pd.DataFrame(settings.AoA_range, columns=['AoA'])
+            AoA_df['Ux'] = settings.Uinlet * np.cos(np.deg2rad(AoA_df['AoA']))
+            AoA_df['Uy'] = settings.Uinlet * np.sin(np.deg2rad(AoA_df['AoA'])) * (-1)
+
+            # Meshing and preprocessing
+            mesh.create_cfMeshDict(True, f'NACA{foil}', AoA_dir)
+            os.system(f'cp {cwd}/geometry/domain_NACA{foil}.stl {AoA_dir}/')
+            os.system(f'mv {AoA_dir}/domain_NACA{foil}.stl {AoA_dir}/domain.stl')
+            os.system(f'cd {AoA_dir} && ./run_mesh.sh')
+
+            os.system(f'mkdir -p {AoA_dir}/fields/mapFieldsTemplate')
+            os.system(f'cp -r {AoA_dir}/constant {AoA_dir}/fields/mapFieldsTemplate/ && cp -r {AoA_dir}/system {AoA_dir}/fields/mapFieldsTemplate/')
+
+            counter = 0
+            map_time_dir = 0
+            for i in AoA_df['AoA']:
+                print(f'---------- Begining calculation for AoA: {i} deg')
+
+                os.system('sed -i "/internalField   uniform (0 0 0);/c internalField   uniform ({} {} 0); " {}/0/U'.format(AoA_df['Ux'][counter],AoA_df['Uy'][counter],AoA_dir))
+                # Mapping from lower AoA fields
+                if settings.mapFields == True and counter > 0:
+                    print('Starting mapping from the previous AoA field')
+                    os.system(f'cd {AoA_dir} && ./run_mapFields.sh')
+                    os.system(f' rm -r {AoA_dir}/fields/mapFieldsTemplate/{map_time_dir}')
+                    # for BC_dict in os.walk(f'{AoA_dir}/0'):
+                    #     os.system(f'gunzip {AoA_dir}/0/{BC_dict}.gz ')
+                    # os.system(f'mv {AoA_dir}/logs/mapFields.log {AoA_dir}/logs/mapFields_[{i}].log')
+
+                if settings.parallel == True:
+                    os.system('sed -i "/numberOfSubdomains X;/c numberOfSubdomains {}; " {}/system/decomposeParDict'.format(settings.NP,AoA_dir))
+                    os.system('sed -i "/np=X/c np={} " {}/run_Parallelsimulation.sh'.format(settings.NP,AoA_dir))
+                    os.system(f'cd {AoA_dir} && ./run_Parallelsimulation.sh')
+                    # os.system(f'rm -r {AoA_dir}/processor*')
+                else:
+                    os.system(f'cd {AoA_dir} && ./run_simulation.sh')
+                    # os.system(f'mv {AoA_dir}/logs/simpleFoam.log {AoA_dir}/logs/simpleFoam_[{i}].log')
+                
+                logFiles = ['decomposePar.log', 'mapFields.log', 'simpleFoam.log', 'reconstructPar.log']
+                for log in logFiles:
+                    os.system(f'mv {AoA_dir}/logs/{log} {AoA_dir}/logs/[{i}]_{log}')
+                
+                os.system(f'mv {AoA_dir}/postProcessing/forceCoeffs1/0/coefficient.dat {AoA_dir}/postProcessing/forceCoeffs1/0/coefficient_[{i}].dat')
+
+                def is_all_digits(s):
+                    return s.isdigit()
+                
+                field_list = []
+
+                for dirpath, dirnames, filenames in os.walk(AoA_dir):
+                    # if 'fields' in dirnames:
+                    #     dirnames.remove('fields')
+                    for dir in ['template', 'fields', 'test']:
+                        if dir in dirnames:
+                            dirnames.remove(dir)
+
+                    for dirname in dirnames:
+                        
+                        if is_all_digits(dirname):
+                            # print(f"Found directory with only numbers: {os.path.join(dirpath, dirname)}")
+                            field = int(dirname)
+                            field_list.append(field)
+
+                print(field_list)
+                max_time_dir = max(field_list)
+                print(max_time_dir)
+                if max_time_dir == 0:
+                    print("Cannot move 0 directory")
+                else:
+                    os.system(f'mkdir {AoA_dir}/fields/AoA_[{i}] && mv {AoA_dir}/{str(max_time_dir)} {AoA_dir}/fields/AoA_[{i}]/')
+                    os.system(f'cp -r {AoA_dir}/fields/AoA_[{i}]/{str(max_time_dir)} {AoA_dir}/fields/mapFieldsTemplate/')
+                    map_time_dir = max_time_dir
+                counter += 1
+
+            os.system(f'rm -r {AoA_dir}/fields/mapFieldsTemplate')
+            os.system(f'rm -r {AoA_dir}/processor*')

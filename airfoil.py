@@ -46,6 +46,8 @@ class Airfoil:
         nameEnd = f'sed -i "/endsolid/c endsolid {name} " {cwd}/geometry/{file}.stl'
 
         return nameEnd
+    
+    # 4 Digit symmetric airfoil
 
     def foil_cords_plus(self, A, T, n):
         a0 = 0.2969
@@ -90,16 +92,21 @@ class Airfoil:
         TE_Pts['Y'] = np.cos(TE_Pts['rad']) * 0.00189
         TE_Pts.iat[-1,3] = 0.0
         TE_Pts['Z'] = 0
-
         
         return TE_Pts
 
-    def mergeFoilPts(self, plusPts, minPts, TePts):
-        PTS = plusPts.append(TePts)
-        PTS = PTS.append(minPts)
+    # 5 Digit asymmetric airfoil
+
+
+
+    def mergeFoilPts(self, plusPts, minPts):
+
+        PTS = pd.concat([plusPts, minPts])    
+        print('PTS')
+        print(PTS)
         PTS_pv = np.column_stack((PTS['X'], PTS['Y'], PTS['Z']))
 
-        return PTS_pv
+        return PTS_pv, PTS
 
     def create_STL_foil(self, coords):
         poly = pv.PolyData()
@@ -108,7 +115,7 @@ class Airfoil:
         cells[:, 1] = np.arange(0, len(coords) - 1, dtype=np.int_)
         cells[:, 2] = np.arange(1, len(coords), dtype=np.int_)
         poly.lines = cells
-        foil_curve = pv.Spline(coords, 1000)      
+        foil_curve = pv.Spline(coords, 5000)      
         foil_STL = foil_curve.extrude([0, 0, 1], capping=False)
         foil_STL = foil_STL.translate([-0.5,0,0])
         cwd = os.getcwd()

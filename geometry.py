@@ -9,7 +9,7 @@ import pandas as pd
 import os
 import sys
 import pyvista as pv
-from sklearn.tree import plot_tree
+# from sklearn.tree import plot_tree
 from sympy import li
 from tenacity import retry 
 import pathlib

@@ -1,0 +1,596 @@
+/*---------------------------------------------------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2212                                  |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+Build  : _70874860-20230612 OPENFOAM=2212 patch=230612 version=2212
+Arch   : "LSB;label=32;scalar=64"
+Exec   : simpleFoam
+Date   : Sep 20 2023
+Time   : 10:56:38
+Host   : maciek-gv62-7rc
+PID    : 722080
+/*---------------------------------------------------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2212                                  |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+Build  : _70874860-20230612 OPENFOAM=2212 patch=230612 version=2212
+Arch   : "LSB;label=32;scalar=64"
+Exec   : simpleFoam
+Date   : Sep 20 2023
+Time   : 10:56:38
+Host   : maciek-gv62-7rc
+PID    : 722078
+I/O    : uncollated
+Case   : /home/maciek/repository/airSupport/run/NACA0017_AoA[0-3]_k-omega
+nProcs : 1
+trapFpe: Floating point exception trapping enabled (FOAM_SIGFPE).
+fileModificationChecking : Monitoring run-time modified files using timeStampMaster (fileModificationSkew 5, maxFileModificationPolls 20)
+allowSystemOperations : Allowing user-supplied system call operations
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+Create time
+
+I/O    : uncollated
+Case   : /home/maciek/repository/airSupport/run/NACA0017_AoA[0-3]_k-omega
+nProcs : 1
+trapFpe: Floating point exception trapping enabled (FOAM_SIGFPE).
+fileModificationChecking : Monitoring run-time modified files using timeStampMaster (fileModificationSkew 5, maxFileModificationPolls 20)
+allowSystemOperations : Allowing user-supplied system call operations
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+Create time
+
+Create mesh for time = 0
+Create mesh for time = 0
+/*---------------------------------------------------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2212                                  |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+Build  : _70874860-20230612 OPENFOAM=2212 patch=230612 version=2212
+Arch   : "LSB;label=32;scalar=64"
+Exec   : simpleFoam
+/*---------------------------------------------------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2212                                  |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+Build  : _70874860-20230612 OPENFOAM=2212 patch=230612 version=2212
+Arch   : "LSB;label=32;scalar=64"
+Exec   : simpleFoam
+Date   : Sep 20 2023
+Time   : 10:56:38
+Date   : Sep 20 2023
+Time   : 10:56:38
+Host   : maciek-gv62-7rc
+PID    : 722079
+Host   : maciek-gv62-7rc
+PID    : 722081
+I/O    : uncollated
+Case   : /home/maciek/repository/airSupport/run/NACA0017_AoA[0-3]_k-omega
+nProcs : 1
+I/O    : uncollated
+trapFpe: Floating point exception trapping enabled (FOAM_SIGFPE).
+fileModificationChecking : Monitoring run-time modified files using timeStampMaster (fileModificationSkew 5, maxFileModificationPolls 20)
+allowSystemOperations : Allowing user-supplied system call operations
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+Create time
+
+Case   : /home/maciek/repository/airSupport/run/NACA0017_AoA[0-3]_k-omega
+nProcs : 1
+trapFpe: Floating point exception trapping enabled (FOAM_SIGFPE).
+fileModificationChecking : Monitoring run-time modified files using timeStampMaster (fileModificationSkew 5, maxFileModificationPolls 20)
+allowSystemOperations : Allowing user-supplied system call operations
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+Create time
+
+Create mesh for time = 0
+Create mesh for time = 0
+
+
+SIMPLE: convergence criteria
+    field U	 tolerance 0.0001
+    field p	 tolerance 0.001
+    field "(k|epsilon|omega)"	 tolerance 0.001
+
+Reading field p
+
+
+
+SIMPLE: convergence criteria
+    field U	 tolerance 0.0001
+    field p	 tolerance 0.001
+    field "(k|epsilon|omega)"	 tolerance 0.001
+
+Reading field p
+
+
+
+SIMPLE: convergence criteria
+    field U	 tolerance 0.0001
+    field p	 tolerance 0.001
+    field "(k|epsilon|omega)"	 tolerance 0.001
+
+Reading field p
+
+
+
+SIMPLE: convergence criteria
+    field U	 tolerance 0.0001
+    field p	 tolerance 0.001
+    field "(k|epsilon|omega)"	 tolerance 0.001
+
+Reading field p
+
+Reading field U
+
+Reading field U
+
+Reading field U
+
+Reading field U
+
+Reading/calculating face flux field phi
+
+Selecting incompressible transport model Newtonian
+Selecting turbulence model type RAS
+Selecting RAS turbulence model kOmega
+Reading/calculating face flux field phi
+
+Selecting incompressible transport model Newtonian
+Selecting turbulence model type RAS
+Selecting RAS turbulence model kOmega
+Reading/calculating face flux field phi
+
+Selecting incompressible transport model Newtonian
+Reading/calculating face flux field phi
+
+Selecting turbulence model type RAS
+Selecting RAS turbulence model kOmega
+Selecting incompressible transport model Newtonian
+Selecting turbulence model type RAS
+Selecting RAS turbulence model kOmega
+bounding k, min: 0 max: 116.187 average: 0.00270578
+RAS
+{
+    RASModel        kOmega;
+    turbulence      on;
+    printCoeffs     on;
+    betaStar        0.09;
+    beta            0.072;
+    gamma           0.52;
+    alphaK          0.5;
+    alphaOmega      0.5;
+}
+
+No MRF models present
+
+No finite volume options present
+
+Starting time loop
+
+forceCoeffs forceCoeffs1:
+    rho: rhoInf
+    Freestream density (rhoInf) set to 1
+    Not including porosity effects
+    magUInf: 10
+    lRef   : 1
+    Aref   : 1
+    rhoInf : 1
+    Selecting all coefficients
+    - Drag force: Cd
+    - Drag force front: Cd(f)
+    - Drag force rear: Cd(r)
+    - Lift force: Cl
+    - Lift force front: Cl(f)
+    - Lift force rear: Cl(r)
+    - Pitch moment: CmPitch
+    - Roll moment: CmRoll
+    - Yaw moment: CmYaw
+    - Side force: Cs
+    - Side force front: Cs(f)
+    - Side force rear: Cs(r)
+
+
+Time = 1
+
+bounding k, min: 0 max: 116.187 average: 0.00270578
+RAS
+{
+    RASModel        kOmega;
+    turbulence      on;
+    printCoeffs     on;
+    betaStar        0.09;
+    beta            0.072;
+    gamma           0.52;
+    alphaK          0.5;
+    alphaOmega      0.5;
+}
+
+No MRF models present
+
+No finite volume options present
+
+Starting time loop
+
+forceCoeffs forceCoeffs1:
+    rho: rhoInf
+    Freestream density (rhoInf) set to 1
+    Not including porosity effects
+    magUInf: 10
+    lRef   : 1
+    Aref   : 1
+    rhoInf : 1
+    Selecting all coefficients
+    - Drag force: Cd
+    - Drag force front: Cd(f)
+    - Drag force rear: Cd(r)
+    - Lift force: Cl
+    - Lift force front: Cl(f)
+    - Lift force rear: Cl(r)
+    - Pitch moment: CmPitch
+    - Roll moment: CmRoll
+    - Yaw moment: CmYaw
+    - Side force: Cs
+    - Side force front: Cs(f)
+    - Side force rear: Cs(r)
+
+
+Time = 1
+
+bounding k, min: 0 max: 116.187 average: 0.00270578
+RAS
+{
+    RASModel        kOmega;
+    turbulence      on;
+    printCoeffs     on;
+    betaStar        0.09;
+    beta            0.072;
+    gamma           0.52;
+    alphaK          0.5;
+    alphaOmega      0.5;
+}
+
+No MRF models present
+
+No finite volume options present
+
+Starting time loop
+
+forceCoeffs forceCoeffs1:
+    rho: rhoInf
+    Freestream density (rhoInf) set to 1
+    Not including porosity effects
+    magUInf: 10
+    lRef   : 1
+    Aref   : 1
+    rhoInf : 1
+    Selecting all coefficients
+    - Drag force: Cd
+    - Drag force front: Cd(f)
+    - Drag force rear: Cd(r)
+    - Lift force: Cl
+    - Lift force front: Cl(f)
+    - Lift force rear: Cl(r)
+    - Pitch moment: CmPitch
+    - Roll moment: CmRoll
+    - Yaw moment: CmYaw
+    - Side force: Cs
+    - Side force front: Cs(f)
+    - Side force rear: Cs(r)
+
+
+Time = 1
+
+bounding k, min: 0 max: 116.187 average: 0.00270578
+RAS
+{
+    RASModel        kOmega;
+    turbulence      on;
+    printCoeffs     on;
+    betaStar        0.09;
+    beta            0.072;
+    gamma           0.52;
+    alphaK          0.5;
+    alphaOmega      0.5;
+}
+
+No MRF models present
+
+No finite volume options present
+
+Starting time loop
+
+forceCoeffs forceCoeffs1:
+    rho: rhoInf
+    Freestream density (rhoInf) set to 1
+    Not including porosity effects
+    magUInf: 10
+    lRef   : 1
+    Aref   : 1
+    rhoInf : 1
+    Selecting all coefficients
+    - Drag force: Cd
+    - Drag force front: Cd(f)
+    - Drag force rear: Cd(r)
+    - Lift force: Cl
+    - Lift force front: Cl(f)
+    - Lift force rear: Cl(r)
+    - Pitch moment: CmPitch
+    - Roll moment: CmRoll
+    - Yaw moment: CmYaw
+    - Side force: Cs
+    - Side force front: Cs(f)
+    - Side force rear: Cs(r)
+
+
+Time = 1
+
+smoothSolver:  Solving for Ux, Initial residual = 0.187176, Final residual = 0.0099704, No Iterations 2
+smoothSolver:  Solving for Uy, Initial residual = 0.214409, Final residual = 0.0161981, No Iterations 2
+smoothSolver:  Solving for Ux, Initial residual = 0.187176, Final residual = 0.0099704, No Iterations 2
+smoothSolver:  Solving for Uy, Initial residual = 0.214409, Final residual = 0.0161981, No Iterations 2
+smoothSolver:  Solving for Ux, Initial residual = 0.187176, Final residual = 0.0099704, No Iterations 2
+smoothSolver:  Solving for Uy, Initial residual = 0.214409, Final residual = 0.0161981, No Iterations 2
+smoothSolver:  Solving for Ux, Initial residual = 0.187176, Final residual = 0.0099704, No Iterations 2
+smoothSolver:  Solving for Uy, Initial residual = 0.214409, Final residual = 0.0161981, No Iterations 2
+GAMG:  Solving for p, Initial residual = 0.194513, Final residual = 0.00918703, No Iterations 14
+GAMG:  Solving for p, Initial residual = 0.194513, Final residual = 0.00918703, No Iterations 14
+GAMG:  Solving for p, Initial residual = 0.194513, Final residual = 0.00918703, No Iterations 14
+GAMG:  Solving for p, Initial residual = 0.194513, Final residual = 0.00918703, No Iterations 14
+GAMG:  Solving for p, Initial residual = 0.00108957, Final residual = 5.24353e-05, No Iterations 10
+GAMG:  Solving for p, Initial residual = 0.00108957, Final residual = 5.24353e-05, No Iterations 10
+GAMG:  Solving for p, Initial residual = 0.00108957, Final residual = 5.24353e-05, No Iterations 10
+GAMG:  Solving for p, Initial residual = 0.00108957, Final residual = 5.24353e-05, No Iterations 10
+GAMG:  Solving for p, Initial residual = 0.000169513, Final residual = 7.9748e-06, No Iterations 26
+GAMG:  Solving for p, Initial residual = 0.000169513, Final residual = 7.9748e-06, No Iterations 26
+GAMG:  Solving for p, Initial residual = 0.000169513, Final residual = 7.9748e-06, No Iterations 26
+GAMG:  Solving for p, Initial residual = 0.000169513, Final residual = 7.9748e-06, No Iterations 26
+GAMG:  Solving for p, Initial residual = 3.49098e-05, Final residual = 1.64981e-06, No Iterations 23
+time step continuity errors : sum local = 0.000178619, global = 3.72344e-06, cumulative = 3.72344e-06
+GAMG:  Solving for p, Initial residual = 3.49098e-05, Final residual = 1.64981e-06, No Iterations 23
+time step continuity errors : sum local = 0.000178619, global = 3.72344e-06, cumulative = 3.72344e-06
+GAMG:  Solving for p, Initial residual = 3.49098e-05, Final residual = 1.64981e-06, No Iterations 23
+time step continuity errors : sum local = 0.000178619, global = 3.72344e-06, cumulative = 3.72344e-06
+smoothSolver:  Solving for omega, Initial residual = 0.310664, Final residual = 0.0122959, No Iterations 2
+bounding omega, min: -3.04715e+07 max: 1.09576e+09 average: 28223
+GAMG:  Solving for p, Initial residual = 3.49098e-05, Final residual = 1.64981e-06, No Iterations 23
+time step continuity errors : sum local = 0.000178619, global = 3.72344e-06, cumulative = 3.72344e-06
+smoothSolver:  Solving for omega, Initial residual = 0.310664, Final residual = 0.0122959, No Iterations 2
+bounding omega, min: -3.04715e+07 max: 1.09576e+09 average: 28223
+smoothSolver:  Solving for k, Initial residual = 0.402411, Final residual = 0.0210957, No Iterations 2
+bounding k, min: -10.8429 max: 161.142 average: 0.00391705
+ExecutionTime = 21.07 s  ClockTime = 22 s
+
+smoothSolver:  Solving for omega, Initial residual = 0.310664, Final residual = 0.0122959, No Iterations 2
+bounding omega, min: -3.04715e+07 max: 1.09576e+09 average: 28223
+forceCoeffs forceCoeffs1 write:
+    Coefficient	Total	Pressure	Viscous	Internal
+    Cd:	-7505.61	-7505.48	-0.129698	0
+smoothSolver:  Solving for omega, Initial residual = 0.310664, Final residual = 0.0122959, No Iterations 2
+    Cd(f):	-3926.1	-3926.09	-0.0196368	0
+    Cd(r):	-3579.51	-3579.4	-0.110061	0
+    Cl:	346.596	346.687	-0.0904243	0
+    Cl(f):	330.642	330.732	-0.0898232	0
+    Cl(r):	15.9541	15.9547	-0.000601113	0
+    CmPitch:	157.344	157.389	-0.0446111	0
+    CmRoll:	-173.298	-173.343	0.0452122	0
+    CmYaw:	-3752.81	-3752.74	-0.064849	0
+    Cs:	-7.00653e-19	-6.85861e-19	-1.47919e-20	0
+    Cs(f):	-3752.81	-3752.74	-0.064849	0
+    Cs(r):	3752.81	3752.74	0.064849	0
+
+    writing force and moment coefficient files.
+bounding omega, min: -3.04715e+07 max: 1.09576e+09 average: 28223
+smoothSolver:  Solving for k, Initial residual = 0.402411, Final residual = 0.0210957, No Iterations 2
+bounding k, min: -10.8429 max: 161.142 average: 0.00391705
+ExecutionTime = 21.6 s  ClockTime = 23 s
+
+
+Time = 2
+
+forceCoeffs forceCoeffs1 write:
+    Coefficient	Total	Pressure	Viscous	Internal
+smoothSolver:  Solving for k, Initial residual = 0.402411, Final residual = 0.0210957, No Iterations 2
+    Cd:	-7505.61	-7505.48	-0.129698	0
+    Cd(f):	-3926.1	-3926.09	-0.0196368	0
+    Cd(r):	-3579.51	-3579.4	-0.110061	0
+    Cl:	346.596	346.687	-0.0904243	0
+    Cl(f):	330.642	330.732	-0.0898232	0
+    Cl(r):	15.9541	15.9547	-0.000601113	0
+    CmPitch:	157.344	157.389	-0.0446111	0
+    CmRoll:	-173.298	-173.343	0.0452122	0
+    CmYaw:	-3752.81	-3752.74	-0.064849	0
+    Cs:	-7.00653e-19	-6.85861e-19	-1.47919e-20	0
+    Cs(f):	-3752.81	-3752.74	-0.064849	0
+    Cs(r):	3752.81	3752.74	0.064849	0
+
+    writing force and moment coefficient files.
+bounding k, min: -10.8429 max: 161.142 average: 0.00391705
+
+Time = 2
+
+ExecutionTime = 21.85 s  ClockTime = 23 s
+
+smoothSolver:  Solving for k, Initial residual = 0.402411, Final residual = 0.0210957, No Iterations 2
+bounding k, min: -10.8429 max: 161.142 average: 0.00391705
+ExecutionTime = 22.16 s  ClockTime = 23 s
+
+forceCoeffs forceCoeffs1 write:
+    Coefficient	Total	Pressure	Viscous	Internal
+    Cd:	-7505.61	-7505.48	-0.129698	0
+    Cd(f):	-3926.1	-3926.09	-0.0196368	0
+    Cd(r):	-3579.51	-3579.4	-0.110061	0
+    Cl:	346.596	346.687	-0.0904243	0
+    Cl(f):	330.642	330.732	-0.0898232	0
+    Cl(r):	15.9541	15.9547	-0.000601113	0
+    CmPitch:	157.344	157.389	-0.0446111	0
+    CmRoll:	-173.298	-173.343	0.0452122	0
+    CmYaw:	-3752.81	-3752.74	-0.064849	0
+    Cs:	-7.00653e-19	-6.85861e-19	-1.47919e-20	0
+    Cs(f):	-3752.81	-3752.74	-0.064849	0
+    Cs(r):	3752.81	3752.74	0.064849	0
+
+    writing force and moment coefficient files.
+
+Time = 2
+
+forceCoeffs forceCoeffs1 write:
+    Coefficient	Total	Pressure	Viscous	Internal
+    Cd:	-7505.61	-7505.48	-0.129698	0
+    Cd(f):	-3926.1	-3926.09	-0.0196368	0
+    Cd(r):	-3579.51	-3579.4	-0.110061	0
+    Cl:	346.596	346.687	-0.0904243	0
+    Cl(f):	330.642	330.732	-0.0898232	0
+    Cl(r):	15.9541	15.9547	-0.000601113	0
+    CmPitch:	157.344	157.389	-0.0446111	0
+    CmRoll:	-173.298	-173.343	0.0452122	0
+    CmYaw:	-3752.81	-3752.74	-0.064849	0
+    Cs:	-7.00653e-19	-6.85861e-19	-1.47919e-20	0
+    Cs(f):	-3752.81	-3752.74	-0.064849	0
+    Cs(r):	3752.81	3752.74	0.064849	0
+
+    writing force and moment coefficient files.
+
+Time = 2
+
+smoothSolver:  Solving for Ux, Initial residual = 0.226857, Final residual = 0.0203297, No Iterations 2
+smoothSolver:  Solving for Uy, Initial residual = 0.400984, Final residual = 0.0395638, No Iterations 2
+smoothSolver:  Solving for Ux, Initial residual = 0.226857, Final residual = 0.0203297, No Iterations 2
+smoothSolver:  Solving for Uy, Initial residual = 0.400984, Final residual = 0.0395638, No Iterations 2
+smoothSolver:  Solving for Ux, Initial residual = 0.226857, Final residual = 0.0203297, No Iterations 2
+smoothSolver:  Solving for Ux, Initial residual = 0.226857, Final residual = 0.0203297, No Iterations 2
+smoothSolver:  Solving for Uy, Initial residual = 0.400984, Final residual = 0.0395638, No Iterations 2
+smoothSolver:  Solving for Uy, Initial residual = 0.400984, Final residual = 0.0395638, No Iterations 2
+GAMG:  Solving for p, Initial residual = 0.0178443, Final residual = 0.00070853, No Iterations 5
+GAMG:  Solving for p, Initial residual = 0.0178443, Final residual = 0.00070853, No Iterations 5
+GAMG:  Solving for p, Initial residual = 0.0178443, Final residual = 0.00070853, No Iterations 5
+GAMG:  Solving for p, Initial residual = 0.0178443, Final residual = 0.00070853, No Iterations 5
+GAMG:  Solving for p, Initial residual = 0.000319025, Final residual = 1.50183e-05, No Iterations 19
+GAMG:  Solving for p, Initial residual = 0.000319025, Final residual = 1.50183e-05, No Iterations 19
+GAMG:  Solving for p, Initial residual = 0.000319025, Final residual = 1.50183e-05, No Iterations 19
+GAMG:  Solving for p, Initial residual = 0.000319025, Final residual = 1.50183e-05, No Iterations 19
+GAMG:  Solving for p, Initial residual = 8.12628e-05, Final residual = 3.21686e-06, No Iterations 13
+GAMG:  Solving for p, Initial residual = 8.12628e-05, Final residual = 3.21686e-06, No Iterations 13
+GAMG:  Solving for p, Initial residual = 8.12628e-05, Final residual = 3.21686e-06, No Iterations 13
+GAMG:  Solving for p, Initial residual = 8.12628e-05, Final residual = 3.21686e-06, No Iterations 13
+GAMG:  Solving for p, Initial residual = 1.33416e-05, Final residual = 6.21536e-07, No Iterations 15
+time step continuity errors : sum local = 7.0473e-05, global = 2.35029e-07, cumulative = 3.95847e-06
+GAMG:  Solving for p, Initial residual = 1.33416e-05, Final residual = 6.21536e-07, No Iterations 15
+time step continuity errors : sum local = 7.0473e-05, global = 2.35029e-07, cumulative = 3.95847e-06
+GAMG:  Solving for p, Initial residual = 1.33416e-05, Final residual = 6.21536e-07, No Iterations 15
+GAMG:  Solving for p, Initial residual = 1.33416e-05, Final residual = 6.21536e-07, No Iterations 15
+time step continuity errors : sum local = 7.0473e-05, global = 2.35029e-07, cumulative = 3.95847e-06
+time step continuity errors : sum local = 7.0473e-05, global = 2.35029e-07, cumulative = 3.95847e-06
+smoothSolver:  Solving for omega, Initial residual = 0.266371, Final residual = 0.00732005, No Iterations 2
+smoothSolver:  Solving for omega, Initial residual = 0.266371, Final residual = 0.00732005, No Iterations 2
+bounding omega, min: -1.21496e+08 max: 7.75025e+09 average: 75911.4
+smoothSolver:  Solving for omega, Initial residual = 0.266371, Final residual = 0.00732005, No Iterations 2
+bounding omega, min: -1.21496e+08 max: 7.75025e+09 average: 75911.4
+smoothSolver:  Solving for omega, Initial residual = 0.266371, Final residual = 0.00732005, No Iterations 2
+bounding omega, min: -1.21496e+08 max: 7.75025e+09 average: 75911.4
+bounding omega, min: -1.21496e+08 max: 7.75025e+09 average: 75911.4
+smoothSolver:  Solving for k, Initial residual = 0.230752, Final residual = 0.00818243, No Iterations 2
+bounding k, min: -0.238906 max: 1106.69 average: 0.0105571
+smoothSolver:  Solving for k, Initial residual = 0.230752, Final residual = 0.00818243, No Iterations 2
+bounding k, min: -0.238906 max: 1106.69 average: 0.0105571
+smoothSolver:  Solving for k, Initial residual = 0.230752, Final residual = 0.00818243, No Iterations 2
+bounding k, min: -0.238906 max: 1106.69 average: 0.0105571
+smoothSolver:  Solving for k, Initial residual = 0.230752, Final residual = 0.00818243, No Iterations 2
+bounding k, min: -0.238906 max: 1106.69 average: 0.0105571
+ExecutionTime = 37.55 s  ClockTime = 47 s
+
+ExecutionTime = 37.9 s  ClockTime = 48 s
+
+ExecutionTime = 38.07 s  ClockTime = 48 s
+
+forceCoeffs forceCoeffs1 write:
+    Coefficient	Total	Pressure	Viscous	Internal
+forceCoeffs forceCoeffs1 write:
+    Coefficient	Total	Pressure	Viscous	Internal
+    Cd:	-13287.6	-13287.8	0.228778	0
+    Cd:	-13287.6	-13287.8	0.228778	0
+    Cd(f):	-7081.95	-7082.02	0.0724413	0
+    Cd(r):	-6205.61	-6205.77	0.156336	0
+    Cd(f):	-7081.95	-7082.02	0.0724413	0
+    Cd(r):	-6205.61	-6205.77	0.156336	0
+    Cl:	876.339	876.255	0.083895	0
+    Cl:	876.339	876.255	0.083895	0
+    Cl(f):	837.98	837.902	0.0779647	0
+    Cl(r):	38.3587	38.3527	0.00593031	0
+    Cl(f):	837.98	837.902	0.0779647	0
+    Cl(r):	38.3587	38.3527	0.00593031	0
+    CmPitch:	399.811	399.775	0.0360172	0
+    CmPitch:	399.811	399.775	0.0360172	0
+    CmRoll:	-438.169	-438.127	-0.0419475	0
+    CmRoll:	-438.169	-438.127	-0.0419475	0
+    CmYaw:	-6643.78	-6643.9	0.114389	0
+    CmYaw:	-6643.78	-6643.9	0.114389	0
+    Cs:	-1.67608e-18	-1.68684e-18	1.07571e-20	0
+    Cs:	-1.67608e-18	-1.68684e-18	1.07571e-20	0
+    Cs(f):	-6643.78	-6643.9	0.114389	0
+    Cs(f):	-6643.78	-6643.9	0.114389	0
+    Cs(r):	6643.78	6643.9	-0.114389	0
+    Cs(r):	6643.78	6643.9	-0.114389	0
+
+
+    writing force and moment coefficient files.
+    writing force and moment coefficient files.
+
+End
+
+
+End
+
+forceCoeffs forceCoeffs1 write:
+    Coefficient	Total	Pressure	Viscous	Internal
+    Cd:	-13287.6	-13287.8	0.228778	0
+    Cd(f):	-7081.95	-7082.02	0.0724413	0
+    Cd(r):	-6205.61	-6205.77	0.156336	0
+    Cl:	876.339	876.255	0.083895	0
+    Cl(f):	837.98	837.902	0.0779647	0
+    Cl(r):	38.3587	38.3527	0.00593031	0
+    CmPitch:	399.811	399.775	0.0360172	0
+    CmRoll:	-438.169	-438.127	-0.0419475	0
+    CmYaw:	-6643.78	-6643.9	0.114389	0
+    Cs:	-1.67608e-18	-1.68684e-18	1.07571e-20	0
+    Cs(f):	-6643.78	-6643.9	0.114389	0
+    Cs(r):	6643.78	6643.9	-0.114389	0
+
+    writing force and moment coefficient files.
+
+End
+
+ExecutionTime = 38.33 s  ClockTime = 48 s
+
+forceCoeffs forceCoeffs1 write:
+    Coefficient	Total	Pressure	Viscous	Internal
+    Cd:	-13287.6	-13287.8	0.228778	0
+    Cd(f):	-7081.95	-7082.02	0.0724413	0
+    Cd(r):	-6205.61	-6205.77	0.156336	0
+    Cl:	876.339	876.255	0.083895	0
+    Cl(f):	837.98	837.902	0.0779647	0
+    Cl(r):	38.3587	38.3527	0.00593031	0
+    CmPitch:	399.811	399.775	0.0360172	0
+    CmRoll:	-438.169	-438.127	-0.0419475	0
+    CmYaw:	-6643.78	-6643.9	0.114389	0
+    Cs:	-1.67608e-18	-1.68684e-18	1.07571e-20	0
+    Cs(f):	-6643.78	-6643.9	0.114389	0
+    Cs(r):	6643.78	6643.9	-0.114389	0
+
+    writing force and moment coefficient files.
+
+End
+

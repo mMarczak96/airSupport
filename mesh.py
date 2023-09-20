@@ -9,7 +9,7 @@ import pandas as pd
 import os
 import sys
 import pyvista as pv
-from sklearn.tree import plot_tree
+# from sklearn.tree import plot_tree
 from sympy import li
 from tenacity import retry 
 import pathlib
@@ -31,9 +31,13 @@ def run_cmd(command : str):
 
 # CF MESH
 
-def create_cfMeshDict(airfoil):
+def create_cfMeshDict(range, airfoil, range_path = str):
 
-    file = open('{}/run/NACA0018/system/meshDict'.format(cwd, airfoil), "w+")
+    if range == False:
+        file = open(f'{cwd}/run/{airfoil}/system/meshDict', "w+")
+    else:
+        file = open(f'{range_path}/system/meshDict', "w+")
+
 
     file.write("""FoamFile
 {
@@ -53,7 +57,15 @@ maxCellSize     0.05;
 
 objectRefinements
 {
-
+    	wake
+        {
+            cellSize 0.05;
+            type box;
+            centre (0 0 0);
+            lengthX 3;
+            lengthY 2;
+            lengthZ 1;
+        }
 }
 
 edgeMeshRefinement
@@ -63,7 +75,7 @@ edgeMeshRefinement
 
 localRefinement
 {
-	foil
+	Foil
 	{
 		additionalRefinementLevels 5;
 		refinementThickness 0.1; //cm
@@ -74,9 +86,9 @@ boundaryLayers
 {
 	patchBoundaryLayers
 	{
-		foil
+		Foil
 		{
-			nLayers 20;
+			nLayers 10;
 			thicknessRatio 1.1;
 			maxFirstLayerThickness 1;
 			allowDiscontinuity 1;
