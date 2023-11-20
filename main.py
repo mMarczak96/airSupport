@@ -18,13 +18,13 @@ import pathlib
 import subprocess
 import physics
 import postProc 
+import VAWT
+from icecream import ic
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    cwd = os.getcwd()
-
     parser.add_argument('-f', '--foil', help='airfoil code', required=True)                                  
-    parser.add_argument('-a', '--actions', nargs='+',help='Actions type [foil]', required=True,)
+    parser.add_argument('-a', '--actions', nargs='+',help='Actions type [foil, AoA_single, AoA_range, VAWT]', required=True,)
     args = parser.parse_args()
 
     return args
@@ -48,6 +48,7 @@ if __name__ == '__main__':
     args = parse_args()
     foil = args.foil
     actions = args.actions
+    Re = physics.Re(settings.ro, settings.Uinlet, settings.c, settings.visc)
 
     for action in actions:
 
@@ -57,7 +58,9 @@ if __name__ == '__main__':
             print(f'Creating NACA{foil} geometry')
             print('----------------------------------------------------------------------------------------')
 
-            Re = physics.Re(settings.ro, settings.Uinlet, settings.c, settings.visc)
+            # Re = physics.Re(settings.ro, settings.Uinlet, settings.c, settings.visc)
+            A = float(f'0.{foil[0]}{foil[1]}')
+            T = float(f'0.{foil[2]}{foil[3]}')
             Naca = Airfoil('NACA{}'.format(foil), settings.A, settings.T, settings.N)
             plus = Naca.foil_cords_plus(settings.A, settings.T, settings.N)
             # min = Naca.foil_cords_min(settings.A, settings.T, settings.N)
@@ -76,6 +79,7 @@ if __name__ == '__main__':
             c=1
             geom.sides(c, 'Sides')
             geom.arcInlet(c, 'Inlet')
+            geom.outlet(c, 'Outlet')
             geom.groupedSTLdomain(f'NACA{foil}','Inlet','Sides','Outlet')
             
             file_path = f"/home/maciek/repository/airSupport/geometry/domain_NACA{foil}.stl"
@@ -92,6 +96,8 @@ if __name__ == '__main__':
             with open(file_path, 'w') as file:
                 # Step 5: Write the modified contents back into the file
                 file.write(modified_content)    
+            
+
 
         if action == 'AoA_single':
 
@@ -103,7 +109,7 @@ if __name__ == '__main__':
             changeOFdir = f'mv {cwd}/run/template {cwd}/run/NACA{foil}_AoA{settings.AoA_single}_{settings.turbModel}'
             run_cmd(copyOFtemp)
             run_cmd(changeOFdir)
-            mesh.create_cfMeshDict(f'NACA{foil}')
+            mesh.create_cfMeshDict(False, f'NACA{foil}')
             os.system('cp {}/geometry/domain_NACA{}.stl {}/run/NACA{}'.format(cwd, foil, cwd, foil))
             os.system('mv {}/run/NACA{}/domain_NACA{}.stl {}/run/NACA{}/domain.stl'.format(cwd,foil,foil,cwd,foil))
             os.system('sed -i "/internalField   uniform (0 0 0);/c internalField   uniform ({} 0 0); " {}/run/NACA{}/0/U'
@@ -206,3 +212,35 @@ if __name__ == '__main__':
 
             os.system(f'rm -r {AoA_dir}/fields/mapFieldsTemplate')
             os.system(f'rm -r {AoA_dir}/processor*')
+
+        if action == 'VAWT':
+
+            #Geometry and mesh generation
+            
+            if settings.VAWT_geom_type not in settings.VAWT_geom_type_list:
+                print(f'Invalid VAWT type: {settings.VAWT_geom_type} !!! Please check the program settings ')
+            else:
+                if settings.VAWT_geom_type == 'savonius':
+
+                    print('----------------------------------------------------------------------------------------')
+                    print(f'Creating geometry for Savonius VAWT:\nShaft d: {settings.sav_d_shaft}m, inner d: {settings.sav_d_in}m, outer d: {settings.sav_d_out}m, distance: {settings.sav_dist}m')
+                    print('----------------------------------------------------------------------------------------')
+                    VAWT_name = f'{settings.VAWT_geom_type}_out{settings.sav_d_out}_in{settings.sav_d_in}_s{settings.sav_d_shaft}_d{settings.sav_dist}'
+                    #Geometry part:
+                    geom.VAWT_domain(settings.sav_d_out, 20, 30, 15, VAWT_name)
+                    geom.savoniusVAWT(settings.sav_d_shaft/2, settings.sav_d_in/2, settings.sav_d_out/2, settings.sav_dist, VAWT_name)
+                    #Mesh part:
+                    VAWT_run_dir = f'{cwd}/run/{VAWT_name}'
+                    command_list = [
+                        f'mkdir -p {VAWT_run_dir}',
+                        f'cp -r {cwd}/template_VAWT {cwd}/run/{VAWT_name} && mv {VAWT_run_dir}/template_VAWT {VAWT_run_dir}/domain',
+                        f'cp {VAWT_run_dir}/domain/domain_farfield.stl {VAWT_run_dir}/domain',
+                        f'cp -r {cwd}/template_VAWT {VAWT_run_dir} && mv {VAWT_run_dir}/template_VAWT {VAWT_run_dir}/rotor ',
+                        f'cp {cwd}/geometry/{VAWT_name}/rotor/domain_rotor.stl {VAWT_run_dir}/rotor',
+                        f'mv {VAWT_run_dir}/domain/system/createPatchDict_domain {VAWT_run_dir}/domain/system/createPatchDict',
+                        f'mv {VAWT_run_dir}/rotor/system/createPatchDict_rotor {VAWT_run_dir}/domain/system/createPatchDict'
+                        f'./{VAWT_run_dir}/domain/run_mesh.sh'
+                    ]
+                    for command in command_list:
+                        run_cmd(command)
+

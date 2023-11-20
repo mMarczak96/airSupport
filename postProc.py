@@ -76,7 +76,7 @@ def plot_OF_residuals_postProc(NACA, type: str):
 
     postProc_df  = pd.read_csv(f"{cwd}/run/NACA{NACA}/postProcessing/forceCoeffs1/0/coefficient.dat", names=columns, skiprows=13, delimiter='\t')
 
-def aeroData_to_HDF(NACA, Re, simType = str, turb = str):
+def aeroData_to_HDF(NACA, AoA, Re, simType = str, turb = str):
 
     #Saves final simulation outcomes to HDF file. 
     #HDF file is stored in simData direstory located in the main airSupport folder
@@ -96,4 +96,4 @@ def aeroData_to_HDF(NACA, Re, simType = str, turb = str):
     data = hdf_dict_df.to_numpy()
 
     with h5.File(f'{cwd}/simData/simData.hdf5', 'a') as f:
-        dset = f.create_dataset(f'NACA{NACA}/{simType}/{turb}/{Re}/aeroData', data=data)
+        dset = f.create_dataset(f'NACA{NACA}/{simType}/{turb}/{Re}/{AoA}/aeroData', data=data)

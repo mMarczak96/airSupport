@@ -23,6 +23,7 @@ class Airfoil:
         self.T = T
         self.n = n
 
+    
     def run_cmd(self, command : str):
         """
         run a command and return its output

@@ -25,3 +25,14 @@ NT = 10 #number of points on trailing edge
 ST = 20 #starting degree value
 ET = 90 #ending degree value
 
+# VAWT SETTINGS:
+VAWT_geom_type_list = ['savonius', 'darrieus']
+VAWT_geom_type = 'savonius' #Geometry type ['savonius', 'darrieus']
+#SAVONIUS SETTINGS:
+sav_d_shaft = 0.1
+sav_d_in = 1.8
+sav_d_out = 2
+sav_dist = 0.2
+
+
+

@@ -1,0 +1,41 @@
+/*---------------------------------------------------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2212                                  |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+Build  : _70874860-20230612 OPENFOAM=2212 patch=230612 version=2212
+Arch   : "LSB;label=32;scalar=64"
+Exec   : mapFields -consistent -sourceTime latestTime fields/mapFieldsTemplate/
+Date   : Nov 02 2023
+Time   : 18:14:57
+Host   : maciek-gv62-7rc
+PID    : 75375
+I/O    : uncollated
+Case   : /home/maciek/repository/airSupport/run/NACA0030_AoA[0-3]_k-omega
+nProcs : 1
+trapFpe: Floating point exception trapping enabled (FOAM_SIGFPE).
+fileModificationChecking : Monitoring run-time modified files using timeStampMaster (fileModificationSkew 5, maxFileModificationPolls 20)
+allowSystemOperations : Allowing user-supplied system call operations
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+Source: "/home/maciek/repository/airSupport/run/NACA0030_AoA[0-3]_k-omega/fields" "mapFieldsTemplate"
+Target: "/home/maciek/repository/airSupport/run" "NACA0030_AoA[0-3]_k-omega"
+
+Create databases as time
+
+Source time: 0
+Target time: 0
+Create meshes
+
+
+
+--> FOAM FATAL ERROR: (openfoam-2212 patch=230612)
+Cannot find file "points" in directory "polyMesh" in times "constant" down to constant
+
+    From virtual Foam::IOobject Foam::fileOperation::findInstance(const Foam::IOobject&, Foam::scalar, const Foam::word&) const
+    in file global/fileOperations/fileOperation/fileOperation.C at line 1192.
+
+FOAM exiting
+

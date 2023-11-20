@@ -2,6 +2,8 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import os
+from subprocess import PIPE, run
+
 
 # This file contains all necessary physics function 
 
@@ -12,6 +14,17 @@ def Re(ro,U,d,visc):
     return int(Re)
 
 
+def run_cmd(self, command : str):
+    """
+    run a command and return its output
+    """
+    return run(
+        command, 
+        stdout=PIPE, 
+        stderr=PIPE, 
+        universal_newlines=True, 
+        shell=True
+    )
 
 
 
@@ -26,20 +39,3 @@ def Re(ro,U,d,visc):
 
 
 
-# FUN
-def squat(n):
-    ran = np.linspace(1, n, n)
-    print(ran)
-    ran = np.flip(ran)
-    sum = 0
-    start_val = 2 * n -1
-    print(f'starting value {start_val}')
-
-    for i in ran :
-        val = 2 * i - 1
-        print(val)
-        sum = sum + val
-    
-    print(f'total: {sum}')
-
-squat(20)

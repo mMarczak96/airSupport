@@ -1,0 +1,13 @@
+VAWT domain 
+VAWT mesh
+VAWT MRF simulation 
+VAWT MRF post-procc
+VAFT sliding mesh simulation
+VAWT sliding mesh post-proc
+
+Airfoil panel method 
+
+BEM algorithm
+BEM automatized with h5py aero datda
+
+

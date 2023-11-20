@@ -1,0 +1,33 @@
+/*---------------------------------------------------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2212                                  |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+Build  : _70874860-20230612 OPENFOAM=2212 patch=230612 version=2212
+Arch   : "LSB;label=32;scalar=64"
+Exec   : surfaceToFMS domain*.stl
+Date   : Nov 13 2023
+Time   : 17:34:55
+Host   : maciek-gv62-7rc
+PID    : 94569
+I/O    : uncollated
+Case   : /home/maciek/repository/airSupport/run/savonius_out2_in1.8_s0.1_d0.2/domain
+nProcs : 1
+trapFpe: Floating point exception trapping enabled (FOAM_SIGFPE).
+fileModificationChecking : Monitoring run-time modified files using timeStampMaster (fileModificationSkew 5, maxFileModificationPolls 20)
+allowSystemOperations : Allowing user-supplied system call operations
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+
+--> FOAM FATAL ERROR: (openfoam-2212 patch=230612)
+No such file "domain*.stl"
+
+
+    From bool Foam::triSurface::read(const Foam::fileName&, const Foam::word&, bool)
+    in file triSurface/triSurfaceIO.C at line 197.
+
+FOAM exiting
+

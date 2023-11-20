@@ -98,3 +98,62 @@ boundaryLayers
 
 
 // ************************************************************************* //""")
+    
+
+def create_Savonius_cfMeshDict(case_path: str):
+
+    #TODO: Develop a function to combine maxCellSize with VAWT diameter
+
+    file = open(f'{case_path}/system/meshDict', "w+")
+
+    file.write("""FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      meshDict;
+}
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+surfaceFile     "domain.fms";
+
+maxCellSize     0.025;
+
+
+
+objectRefinements
+{
+
+}
+
+edgeMeshRefinement
+{
+
+}
+
+localRefinement
+{
+	Rotor
+	{
+		additionalRefinementLevels 2;
+		refinementThickness 0.1; //cm
+	}
+}
+
+boundaryLayers
+{
+	patchBoundaryLayers
+	{
+		Rotor
+		{
+			nLayers 5;
+			thicknessRatio 1.1;
+			maxFirstLayerThickness 1;
+			allowDiscontinuity 1;
+		}
+	}
+}
+
+
+// ************************************************************************* //""")
