@@ -63,6 +63,7 @@ if __name__ == '__main__':
             T = float(f'0.{foil[2]}{foil[3]}')
             Naca = Airfoil('NACA{}'.format(foil), settings.A, settings.T, settings.N)
             plus = Naca.foil_cords_plus(settings.A, settings.T, settings.N)
+            min = Naca.foil_cords_plus(settings.A, settings.T, settings.N)
             # min = Naca.foil_cords_min(settings.A, settings.T, settings.N)
             te = Naca.roundedTE(settings.NT, settings.ST, settings.ET, plus)
 
@@ -71,7 +72,15 @@ if __name__ == '__main__':
 
             down['Y'] = down['Y'] * (-1)
             down = down.iloc[::-1]
-                        
+            print("UP!")
+            print(plus)
+            # up.to_csv(f'{cwd}/foil_UP.csv')
+            # print("DOWN!")
+            # print(down)
+            # down.to_csv(f'{cwd}/foil_DOWN.csv')
+
+            mesh.create_5Blocks_BlockMeshDict(plus, min , f'{cwd}/resources/blockMeshGen')
+
             cords, PTS = Naca.mergeFoilPts(up, down)
             plt.scatter(PTS['X'],PTS['Y'])
             Naca.create_STL_foil(cords)
@@ -239,7 +248,8 @@ if __name__ == '__main__':
                         f'cp {cwd}/geometry/{VAWT_name}/rotor/domain_rotor.stl {VAWT_run_dir}/rotor',
                         f'mv {VAWT_run_dir}/domain/system/createPatchDict_domain {VAWT_run_dir}/domain/system/createPatchDict',
                         f'mv {VAWT_run_dir}/rotor/system/createPatchDict_rotor {VAWT_run_dir}/domain/system/createPatchDict'
-                        f'./{VAWT_run_dir}/domain/run_mesh.sh'
+                        
+                        # f'./{VAWT_run_dir}/domain/run_mesh.sh'
                     ]
                     for command in command_list:
                         run_cmd(command)
