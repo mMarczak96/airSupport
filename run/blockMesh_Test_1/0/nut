@@ -29,10 +29,7 @@ boundaryField
 	{
         type            zeroGradient;
     }
-    sides
-    {
-        type            zeroGradient;
-    }
+
     foil
     {
         type            nutkWallFunction;

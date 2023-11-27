@@ -13,6 +13,7 @@ import subprocess
 import physics
 import h5py as h5
 
+
 #This file stores post-processing functions of any type
 
 cwd = os.getcwd()
@@ -63,9 +64,37 @@ def plot_OF_aero_postProc(NACA, type: str):
     plt.tight_layout()
     plt.savefig(f"{cwd}/run/NACA{NACA}/postProcessing/aeroPlots.png")
 
-def plot_AoA_series_aero(NACA, type = str):
+def plot_AoA_series_aero(NACA, AoA_range, path):
 
-    #Colects data from series of AoA simulations and creates plots of: Cl, Cd, Cl/Cd in function of AoA
+    # Colects data from series of AoA simulations and creates plots of: Cl, Cd, Cl/Cd in function of AoA
+    # Aerodynamical ocefficients shown on the graph are taken from the last iteration of the simulation
+
+    columns = ['Time', 'Cd', 'Cd(f)', 'Cd(r)', 'Cl', 'Cl(f)', 'Cl(r)', 'CmPitch', 'CmRoll', 'CmYaw', 'Cs', 'Cs(f)', 'Cs(r)']
+    postProc_df = pd.DataFrame(columns=['AoA', 'Cl', 'Cd', 'Cl/Cd'])
+    for AoA in AoA_range:
+        AoA_OF_df  = pd.read_csv(f"{path}/postProcessing/forceCoeffs1/0/coefficient_[{AoA}].dat", names=columns, skiprows=13, delimiter='\t')
+        AoA_dict = {
+            'AoA': AoA,
+            'Cl': AoA_OF_df['Cl'].iloc[-1],
+            'Cd': AoA_OF_df['Cd'].iloc[-1],
+            'Cl/Cd': round(AoA_OF_df['Cl'].iloc[-1] / AoA_OF_df['Cd'].iloc[-1], 4)
+        }
+        AoA_df = pd.DataFrame(AoA_dict, index=[1])
+        postProc_df = pd.concat([postProc_df, AoA_df], ignore_index=True)
+    nrows, ncols = 1, 3
+    fig, axes = plt.subplots(nrows, ncols, figsize=(24, 10))
+    plot_list = postProc_df.columns.to_list()
+    for i, category in enumerate(plot_list[1:]):
+        row, col = i // ncols, i % ncols
+        ax = axes[col]
+        ax.plot(postProc_df['AoA'], postProc_df[f'{category}'] )
+        ax.set_title(f'{category}' + r'($\alpha$)')
+        ax.set_xlabel(r'($\alpha$)')
+        ax.set_ylabel(category)
+
+    plt.tight_layout()
+    plt.show()
+    fig.savefig(f"{path}/postProcessing/aeroRangePlots.png")
 
     return 0
 

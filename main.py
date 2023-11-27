@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import os
+import sys
 from airfoil import Airfoil
 import argparse
 import settings
@@ -61,51 +62,41 @@ if __name__ == '__main__':
             # Re = physics.Re(settings.ro, settings.Uinlet, settings.c, settings.visc)
             A = float(f'0.{foil[0]}{foil[1]}')
             T = float(f'0.{foil[2]}{foil[3]}')
-            Naca = Airfoil('NACA{}'.format(foil), settings.A, settings.T, settings.N)
-            plus = Naca.foil_cords_plus(settings.A, settings.T, settings.N)
-            min = Naca.foil_cords_plus(settings.A, settings.T, settings.N)
-            # min = Naca.foil_cords_min(settings.A, settings.T, settings.N)
+            Naca = Airfoil(f'NACA{foil}', A, T, settings.N)
+            plus = Naca.foil_cords_plus(A, T, settings.N)
+            min = Naca.foil_cords_min(A, T, settings.N)
             te = Naca.roundedTE(settings.NT, settings.ST, settings.ET, plus)
-
-            up = pd.concat([plus, te])    
-            down = pd.concat([plus, te])    
-
-            down['Y'] = down['Y'] * (-1)
-            down = down.iloc[::-1]
-            print("UP!")
-            print(plus)
-            # up.to_csv(f'{cwd}/foil_UP.csv')
-            # print("DOWN!")
-            # print(down)
-            # down.to_csv(f'{cwd}/foil_DOWN.csv')
-
-            mesh.create_5Blocks_BlockMeshDict(plus, min , f'{cwd}/resources/blockMeshGen')
-
-            cords, PTS = Naca.mergeFoilPts(up, down)
-            plt.scatter(PTS['X'],PTS['Y'])
-            Naca.create_STL_foil(cords)
-
-            c=1
-            geom.sides(c, 'Sides')
-            geom.arcInlet(c, 'Inlet')
-            geom.outlet(c, 'Outlet')
-            geom.groupedSTLdomain(f'NACA{foil}','Inlet','Sides','Outlet')
             
-            file_path = f"/home/maciek/repository/airSupport/geometry/domain_NACA{foil}.stl"
+            if settings.meshing_type not in settings.meshing_type_list:
+                print(f'- - - FATAL ERROR - - - \nInvalid meshing strategy: {settings.meshing_type} \nAvailable meshing strategies: {settings.meshing_type_list} \nPlease check the program settings!')
+                sys.exit()
 
-            # Step 1: Open the text file in read mode
-            with open(file_path, 'r') as file:
-                # Step 2: Read the contents of the file
-                content = file.read()
+            elif settings.meshing_type == 'blockMesh':
+                print('Meshing strategy: blockMesh')
+                mesh.create_5Blocks_BlockMeshDict(plus, min , f'{cwd}/geometry/blockMeshDict_NACA{foil}')
 
-            # Step 3: Replace all commas with dots
-            modified_content = content.replace(',', '.')
+            elif settings.meshing_type == 'cfMesh':
+                print('Meshing strategy: cfMesh')
+                up = pd.concat([plus, te])    
+                down = pd.concat([plus, te])    
+                down['Y'] = down['Y'] * (-1)
+                down = down.iloc[::-1]
 
-            # Step 4: Open the same file in write mode
-            with open(file_path, 'w') as file:
-                # Step 5: Write the modified contents back into the file
-                file.write(modified_content)    
-            
+                cords, PTS = Naca.mergeFoilPts(up, down)
+                plt.scatter(PTS['X'],PTS['Y'])
+                Naca.create_STL_foil(cords)
+
+                geom.sides(settings.c, 'Sides')
+                geom.arcInlet(settings.c, 'Inlet')
+                geom.outlet(settings.c, 'Outlet')
+                geom.groupedSTLdomain(f'NACA{foil}','Inlet','Sides','Outlet')
+                
+                file_path = f"{cwd}/geometry/domain_NACA{foil}.stl"
+                with open(file_path, 'r') as file:
+                    content = file.read()
+                modified_content = content.replace(',', '.')
+                with open(file_path, 'w') as file:
+                    file.write(modified_content)
 
 
         if action == 'AoA_single':
@@ -114,21 +105,29 @@ if __name__ == '__main__':
             print(f'Starting single angle of attack simulation. AoA range: {settings.AoA_single}, Re: {Re}, Turbulence model: {settings.turbModel}')
             print('----------------------------------------------------------------------------------------')
 
-            copyOFtemp = f'cp -r {cwd}/template {cwd}/run'
-            changeOFdir = f'mv {cwd}/run/template {cwd}/run/NACA{foil}_AoA{settings.AoA_single}_{settings.turbModel}'
-            run_cmd(copyOFtemp)
-            run_cmd(changeOFdir)
-            mesh.create_cfMeshDict(False, f'NACA{foil}')
-            os.system('cp {}/geometry/domain_NACA{}.stl {}/run/NACA{}'.format(cwd, foil, cwd, foil))
-            os.system('mv {}/run/NACA{}/domain_NACA{}.stl {}/run/NACA{}/domain.stl'.format(cwd,foil,foil,cwd,foil))
-            os.system('sed -i "/internalField   uniform (0 0 0);/c internalField   uniform ({} 0 0); " {}/run/NACA{}/0/U'
-                .format(settings.Uinlet, cwd, foil))
-            os.system('cd run/NACA{} && ./run_mesh.sh'.format(foil))
-            os.system('cd run/NACA{} && ./run_simulation.sh'.format(foil))
+            copy_OF_temp = f'cp -r {cwd}/template {cwd}/run'
+            foil_dir = f'NACA{foil}__AoA{settings.AoA_single}_{settings.turbModel}'
+            change_OF_dir = f'mv {cwd}/run/template {cwd}/run/{foil_dir}'
+            run_cmd(copy_OF_temp)
+            run_cmd(change_OF_dir)
+
+            if settings.meshing_type == 'cfMesh':
+                mesh.create_cfMeshDict(False, foil_dir)
+                os.system(f'cp {cwd}/geometry/domain_NACA{foil}.stl {cwd}/run/{foil_dir}')
+                os.system(f'mv {cwd}/run/{foil_dir}/domain_NACA{foil}.stl {cwd}/run/{foil_dir}/domain.stl')
+                os.system(f'cd run/NACA{foil_dir} && ./run_mesh.sh')
+            elif settings.meshing_type == 'blockMesh':
+                os.system(f'cp {cwd}/geometry/blockMeshDict_NACA{foil} {cwd}/run/{foil_dir}/system')
+                os.system(f'mv {cwd}/run/{foil_dir}/system/blockMeshDict_NACA{foil} {cwd}/run/{foil_dir}/system/blockMeshDict')
+                os.system(f'cd run/{foil_dir} && ./blockMesh.sh')
+
+
+            os.system(f'sed -i "/internalField   uniform (0 0 0);/c internalField   uniform ({settings.Uinlet} 0 0); " {cwd}/run/{foil_dir}/0/U')
+            os.system(f'cd run/{foil_dir} && ./run_simulation.sh')
 
             #Postprocessing stage
             postProc.plot_OF_aero_postProc(foil,'steady')
-            postProc.aeroData_to_HDF(foil, int(Re), settings.Type, settings.turbModel)
+            postProc.aeroData_to_HDF(foil, int(Re), settings.sim_type, settings.turbModel)
 
 
         if action == 'AoA_range':
@@ -139,11 +138,11 @@ if __name__ == '__main__':
 
             AoA_dir = f'{cwd}/run/NACA{foil}_AoA[{settings.AoA_range.min()}-{settings.AoA_range.max()}]_{settings.turbModel}'
             # os.system(f'mkdir {AoA_dir}')
-            # copyOFtemp = f'cp -r {cwd}/template {AoA_dir}'
-            copyOFtemp = f'cp -r {cwd}/template {cwd}/run'
-            run_cmd(copyOFtemp)
-            changeOFdir = f'mv run/template {AoA_dir}'
-            run_cmd(changeOFdir)
+            # copy_OF_temp = f'cp -r {cwd}/template {AoA_dir}'
+            copy_OF_temp = f'cp -r {cwd}/template {cwd}/run'
+            run_cmd(copy_OF_temp)
+            change_OF_dir = f'mv run/template {AoA_dir}'
+            run_cmd(change_OF_dir)
 
             # Calculate AoA velocity BC df
             AoA_df = pd.DataFrame(settings.AoA_range, columns=['AoA'])
@@ -151,10 +150,16 @@ if __name__ == '__main__':
             AoA_df['Uy'] = settings.Uinlet * np.sin(np.deg2rad(AoA_df['AoA'])) * (-1)
 
             # Meshing and preprocessing
-            mesh.create_cfMeshDict(True, f'NACA{foil}', AoA_dir)
-            os.system(f'cp {cwd}/geometry/domain_NACA{foil}.stl {AoA_dir}/')
-            os.system(f'mv {AoA_dir}/domain_NACA{foil}.stl {AoA_dir}/domain.stl')
-            os.system(f'cd {AoA_dir} && ./run_mesh.sh')
+            if settings.meshing_type == 'cfMesh':
+                mesh.create_cfMeshDict(True, f'NACA{foil}', AoA_dir)
+                os.system(f'cp {cwd}/geometry/domain_NACA{foil}.stl {AoA_dir}/')
+                os.system(f'mv {AoA_dir}/domain_NACA{foil}.stl {AoA_dir}/domain.stl')
+                os.system(f'cd {AoA_dir} && ./run_mesh.sh')
+
+            elif settings.meshing_type == 'blockMesh':
+                os.system(f'cp {cwd}/geometry/blockMeshDict_NACA{foil} {AoA_dir}/system')
+                os.system(f'mv {AoA_dir}/system/blockMeshDict_NACA{foil} {AoA_dir}/system/blockMeshDict')
+                os.system(f'cd {AoA_dir} && ./blockMesh.sh')
 
             os.system(f'mkdir -p {AoA_dir}/fields/mapFieldsTemplate')
             os.system(f'cp -r {AoA_dir}/constant {AoA_dir}/fields/mapFieldsTemplate/ && cp -r {AoA_dir}/system {AoA_dir}/fields/mapFieldsTemplate/')
@@ -195,8 +200,7 @@ if __name__ == '__main__':
                 field_list = []
 
                 for dirpath, dirnames, filenames in os.walk(AoA_dir):
-                    # if 'fields' in dirnames:
-                    #     dirnames.remove('fields')
+
                     for dir in ['template', 'fields', 'test']:
                         if dir in dirnames:
                             dirnames.remove(dir)
@@ -204,7 +208,6 @@ if __name__ == '__main__':
                     for dirname in dirnames:
                         
                         if is_all_digits(dirname):
-                            # print(f"Found directory with only numbers: {os.path.join(dirpath, dirname)}")
                             field = int(dirname)
                             field_list.append(field)
 
@@ -228,6 +231,7 @@ if __name__ == '__main__':
             
             if settings.VAWT_geom_type not in settings.VAWT_geom_type_list:
                 print(f'Invalid VAWT type: {settings.VAWT_geom_type} !!! Please check the program settings ')
+                sys.exit()
             else:
                 if settings.VAWT_geom_type == 'savonius':
 

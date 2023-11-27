@@ -1,0 +1,44 @@
+/*---------------------------------------------------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2212                                  |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+Build  : _70874860-20230612 OPENFOAM=2212 patch=230612 version=2212
+Arch   : "LSB;label=32;scalar=64"
+Exec   : mapFields -consistent -sourceTime latestTime fields/mapFieldsTemplate/
+Date   : Nov 27 2023
+Time   : 11:25:47
+Host   : maciek-gv62-7rc
+PID    : 83505
+I/O    : uncollated
+Case   : /home/maciek/repository/airSupport/run/NACA0015_AoA[0-3]_k-omega
+nProcs : 1
+trapFpe: Floating point exception trapping enabled (FOAM_SIGFPE).
+fileModificationChecking : Monitoring run-time modified files using timeStampMaster (fileModificationSkew 5, maxFileModificationPolls 20)
+allowSystemOperations : Allowing user-supplied system call operations
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+Source: "/home/maciek/repository/airSupport/run/NACA0015_AoA[0-3]_k-omega/fields" "mapFieldsTemplate"
+Target: "/home/maciek/repository/airSupport/run" "NACA0015_AoA[0-3]_k-omega"
+
+Create databases as time
+
+Source time: 100
+Target time: 0
+Create meshes
+
+Source mesh size: 165000	Target mesh size: 165000
+
+
+Consistently creating and mapping fields for time 100
+
+    interpolating p
+    interpolating nut
+    interpolating k
+    interpolating omega
+    interpolating U
+
+End
+

@@ -23,13 +23,13 @@ startTime       0;
 
 stopAt          endTime;
 
-endTime         2;
+endTime         100;
 
 deltaT          1;
 
 writeControl    timeStep;
 
-writeInterval   2;
+writeInterval   100;
 
 purgeWrite      2;
 
@@ -48,6 +48,14 @@ runTimeModifiable true;
 functions
 {
     #include "forceCoeffs"
+
+    solverInfo
+	{
+	    type            solverInfo;
+	    libs            ("libutilityFunctionObjects.so");
+	    fields          (U p);
+	    writeResidualFields no;
+	}
 }
 
 
