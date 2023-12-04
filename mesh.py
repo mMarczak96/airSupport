@@ -281,15 +281,15 @@ vertices
         
 blocks																
 (																
-	hex	(0 1 2 3 10 11 12 13)	( 500 150 1) simpleGrading (1 1000 1)   //block	0
+	hex	(0 1 2 3 10 11 12 13)	( 300 100 1) simpleGrading (1 1000 1)   //block	0
 																													
-	hex	(1 4 5 2 11 14 15 12)	( 700 150 1) simpleGrading (15 1000 1)  //block	1														
+	hex	(1 4 5 2 11 14 15 12)	( 500 100 1) simpleGrading (15 1000 1)  //block	1														
                											
-	hex	(6 7 4 1 16 17 14 11)	( 700 15 1) simpleGrading (15 1 1)      //block	2
+	hex	(6 7 4 1 16 17 14 11)	( 500 10 1) simpleGrading (15 1 1)      //block	2
 																																								
-	hex	(8 9 7 6 18 19 17 16)	( 700 150 1) simpleGrading (15 0.001 1) //block	3	
+	hex	(8 9 7 6 18 19 17 16)	( 500 100 1) simpleGrading (15 0.001 1) //block	3	
 	
-	hex	(3 8 6 0 13 18 16 10)	( 500 150 1) simpleGrading (1 0.001 1)  //block	4								
+	hex	(3 8 6 0 13 18 16 10)	( 300 100 1) simpleGrading (1 0.001 1)  //block	4								
 );		
 
 edges																

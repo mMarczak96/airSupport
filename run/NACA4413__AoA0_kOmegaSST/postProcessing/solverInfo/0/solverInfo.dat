@@ -1,0 +1,36 @@
+# Solver information
+# Time        	U_solver      	Ux_initial    	Ux_final      	Ux_iters      	Uy_initial    	Uy_final      	Uy_iters      	U_converged   	p_solver      	p_initial     	p_final       	p_iters       	p_converged   
+1             	smoothSolver	1.000000e+00	5.026030e-02	2	1.000000e+00	5.377730e-02	2	false	GAMG	1.000000e+00	4.113620e-02	26	true
+2             	smoothSolver	2.564900e-01	1.137770e-02	2	3.361840e-01	1.421980e-02	2	false	GAMG	4.084190e-02	1.446270e-03	22	true
+3             	smoothSolver	1.345960e-01	6.455010e-03	2	2.292040e-01	1.023620e-02	2	false	GAMG	2.863010e-02	1.250650e-03	12	true
+4             	smoothSolver	8.178770e-02	3.899710e-03	2	1.510500e-01	6.963290e-03	2	false	GAMG	5.221330e-02	2.525020e-03	17	true
+5             	smoothSolver	4.482020e-02	2.132850e-03	2	8.660760e-02	4.080350e-03	2	false	GAMG	5.147370e-02	2.096670e-03	18	true
+6             	smoothSolver	1.621860e-02	8.346830e-04	2	3.089110e-02	1.499460e-03	2	false	GAMG	1.508110e-01	6.842580e-03	20	true
+7             	smoothSolver	1.460850e-02	9.057310e-04	2	2.709100e-02	1.482030e-03	2	false	GAMG	1.264470e-01	5.750070e-03	20	true
+8             	smoothSolver	3.169530e-02	1.760660e-03	2	6.276050e-02	3.332520e-03	2	false	GAMG	9.790300e-02	3.891290e-03	12	true
+9             	smoothSolver	3.959920e-02	2.066020e-03	2	8.140550e-02	4.253290e-03	2	false	GAMG	9.285200e-02	3.942600e-03	15	true
+10            	smoothSolver	3.434140e-02	1.720560e-03	2	7.307520e-02	3.833130e-03	2	false	GAMG	1.122640e-01	4.472610e-03	14	true
+11            	smoothSolver	2.001910e-02	1.051800e-03	2	4.152570e-02	2.135120e-03	2	false	GAMG	3.459720e-01	1.386240e-02	16	true
+12            	smoothSolver	8.679680e-03	6.059080e-04	2	1.739590e-02	1.024080e-03	2	false	GAMG	1.607570e-01	7.299320e-03	20	true
+13            	smoothSolver	1.334180e-02	8.239120e-04	2	2.784790e-02	1.588410e-03	2	false	GAMG	1.025780e-01	4.765890e-03	16	true
+14            	smoothSolver	1.455680e-02	8.021360e-04	2	3.192770e-02	1.740610e-03	2	false	GAMG	8.870940e-02	3.673200e-03	14	true
+15            	smoothSolver	1.220240e-02	6.317040e-04	2	2.793820e-02	1.459830e-03	2	false	GAMG	1.090370e-01	4.964350e-03	12	true
+16            	smoothSolver	8.320490e-03	4.367250e-04	2	1.890460e-02	9.668920e-04	2	false	GAMG	1.799950e-01	7.731060e-03	12	true
+17            	smoothSolver	4.631600e-03	2.816710e-04	2	9.828040e-03	5.447310e-04	2	false	GAMG	4.738040e-01	2.350120e-02	14	true
+18            	smoothSolver	4.293560e-03	2.730460e-04	2	9.735430e-03	5.548310e-04	2	false	GAMG	2.056480e-01	9.575930e-03	15	true
+19            	smoothSolver	5.421700e-03	3.040470e-04	2	1.213130e-02	6.630170e-04	2	false	GAMG	1.601130e-01	7.644280e-03	10	true
+20            	smoothSolver	5.203240e-03	2.778620e-04	2	1.203410e-02	6.337330e-04	2	false	GAMG	1.887020e-01	8.642630e-03	10	true
+21            	smoothSolver	4.010930e-03	2.130390e-04	2	9.786320e-03	5.002860e-04	2	false	GAMG	3.633820e-01	1.621520e-02	12	true
+22            	smoothSolver	2.532080e-03	1.380850e-04	2	6.535370e-03	3.337230e-04	2	false	GAMG	1.956180e-01	8.601310e-03	10	true
+23            	smoothSolver	1.761730e-03	1.003920e-04	2	5.139240e-03	2.589640e-04	2	false	GAMG	1.188260e-01	5.455940e-03	10	true
+24            	smoothSolver	2.070170e-03	1.071170e-04	2	6.049720e-03	2.866220e-04	2	false	GAMG	8.596790e-02	3.800400e-03	10	true
+25            	smoothSolver	2.208450e-03	1.083010e-04	2	6.205400e-03	2.847980e-04	2	false	GAMG	7.765940e-02	2.995560e-03	10	true
+26            	smoothSolver	1.951640e-03	9.460320e-05	2	5.480530e-03	2.491630e-04	2	false	GAMG	8.131990e-02	3.760730e-03	10	true
+27            	smoothSolver	1.488300e-03	7.446140e-05	2	4.267480e-03	1.961020e-04	2	false	GAMG	9.746870e-02	4.182890e-03	10	true
+28            	smoothSolver	1.052460e-03	5.517540e-05	2	3.150360e-03	1.510110e-04	2	false	GAMG	1.282670e-01	5.749100e-03	9	true
+29            	smoothSolver	9.125020e-04	4.888010e-05	2	3.120800e-03	1.496150e-04	2	false	GAMG	1.713230e-01	7.429170e-03	8	true
+30            	smoothSolver	9.973630e-04	5.086160e-05	2	3.342170e-03	1.570410e-04	2	false	GAMG	1.953950e-01	8.023730e-03	8	true
+31            	smoothSolver	9.709290e-04	4.835470e-05	2	3.282760e-03	1.510970e-04	2	false	GAMG	1.652280e-01	7.809380e-03	8	true
+32            	smoothSolver	8.367420e-04	4.138710e-05	2	2.984850e-03	1.358170e-04	2	false	GAMG	1.185970e-01	5.766530e-03	8	true
+33            	smoothSolver	6.716890e-04	3.408770e-05	2	2.691240e-03	1.216020e-04	2	false	GAMG	8.226510e-02	3.540120e-03	9	true
+34            	smoothSolver	5.721320e-04	2.948460e-05	2	2.529400e-03	1.129070e-04	2	false	GAMG	6.261960e-02	2.611970e-03	8	true

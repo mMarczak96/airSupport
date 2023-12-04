@@ -170,6 +170,7 @@ if __name__ == '__main__':
                 print(f'---------- Begining calculation for AoA: {i} deg')
 
                 os.system('sed -i "/internalField   uniform (0 0 0);/c internalField   uniform ({} {} 0); " {}/0/U'.format(AoA_df['Ux'][counter],AoA_df['Uy'][counter],AoA_dir))
+                os.system(f'sed -i "/RASModel        X;/c RASModel {settings.turbModel}; " {AoA_dir}/constant/turbulenceProperties')
                 # Mapping from lower AoA fields
                 if settings.mapFields == True and counter > 0:
                     print('Starting mapping from the previous AoA field')
