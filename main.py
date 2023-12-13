@@ -21,11 +21,12 @@ import physics
 import postProc 
 import VAWT
 from icecream import ic
+import blade_gen
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-f', '--foil', help='airfoil code', required=True)                                  
-    parser.add_argument('-a', '--actions', nargs='+',help='Actions type [foil, AoA_single, AoA_range, VAWT]', required=True,)
+    parser.add_argument('-f', '--foil', help='Insert NACA number', required=False)                                  
+    parser.add_argument('-a', '--actions', nargs='+',help='Actions types: [foil, AoA_single, AoA_range, VAWT]', required=False,)
     args = parser.parse_args()
 
     return args
@@ -56,7 +57,7 @@ if __name__ == '__main__':
         if action == 'foil':
 
             print('----------------------------------------------------------------------------------------')
-            print(f'Creating NACA{foil} geometry')
+            print(f'Creating single airfoil: NACA{foil} geometry')
             print('----------------------------------------------------------------------------------------')
 
             # Re = physics.Re(settings.ro, settings.Uinlet, settings.c, settings.visc)
@@ -83,7 +84,6 @@ if __name__ == '__main__':
                 down = down.iloc[::-1]
 
                 cords, PTS = Naca.mergeFoilPts(up, down)
-                plt.scatter(PTS['X'],PTS['Y'])
                 Naca.create_STL_foil(cords)
 
                 geom.sides(settings.c, 'Sides')
@@ -97,7 +97,6 @@ if __name__ == '__main__':
                 modified_content = content.replace(',', '.')
                 with open(file_path, 'w') as file:
                     file.write(modified_content)
-
 
         if action == 'AoA_single':
 
@@ -259,3 +258,63 @@ if __name__ == '__main__':
                     for command in command_list:
                         run_cmd(command)
 
+        if action == 'HAWT_blade':
+                    
+            print('----------------------------------------------------------------------------------------')
+            print(f'Creating HAVT blade geometry')
+            print('----------------------------------------------------------------------------------------')
+            # Read blade data and create airfoil dictionary
+            print(f'Reading blade data from: {cwd}/initial_data/blade_df.csv')
+            blade_df = pd.read_csv(f'{cwd}/initial_data/blade_small_df.csv')
+            print(blade_df)
+            if settings.HAWT_name is None: 
+                HAWT_name = f'HAWT_R{blade_df["pos"].iloc[-1]}_n{settings.HAWT_n}_H{settings.HAWT_H}'
+            else:
+                HAWT_name = settings.HAWT_name
+            HAWT_geom_dir = f'{cwd}/geometry/{HAWT_name}'
+            os.system(f'mkdir -p {HAWT_geom_dir}')
+
+            airfoil_dict ={}
+            te_dict = {}
+            for foil in list(set(blade_df['airfoil'])):
+
+                A = float(f'0.{foil[4]}{foil[5]}')
+                T = float(f'0.{foil[6]}{foil[7]}')
+                Naca = Airfoil(foil, A, T, settings.N)
+                plus = Naca.foil_cords_plus(A, T, settings.N)
+                min = Naca.foil_cords_min(A, T, settings.N)
+                airfoil_dict[foil] = pd.concat([plus,min])   
+
+            blade_shell = geom.generate_blade_mesh(blade_df, airfoil_dict, f'{cwd}/geometry/blade_test_new')
+            # turbine, rotor_bounds = blade_gen.generate_turbine_geometry(HAWT_geom_dir, blade_shell, settings.HAWT_n, 
+                                                                        # settings.HAWT_r_hub, settings.HAWT_L_hub, settings.HAWT_r_hub, settings.HAWT_H)
+            # rotor_domain = geom.generete_AMI_HAWT_cylinder(HAWT_geom_dir, 2, rotor_bounds)
+
+            
+        if action == 'HAWT':
+
+            blade_df = pd.read_csv(f'{cwd}/initial_data/blade_small_df.csv')
+            R = blade_df["pos"].iloc[-1]
+            print('----------------------------------------------------------------------------------------')
+            print(f'Preparing simulaion of HAWT:\nTower height: {settings.HAWT_H}m, Turbine radius: {R}m, Blades: {settings.HAWT_n}, Hub length: {settings.HAWT_L_hub}m, Hub radius: {settings.HAWT_r_hub}m')
+            print('----------------------------------------------------------------------------------------')
+            print(f'Reading blade data from: {cwd}/initial_data/blade_df.csv')
+            print(blade_df)
+            print('----------------------------------------------------------------------------------------')
+            print(f'Airfoils used in the HAWT design: {list(set(blade_df["airfoil"]))}')
+            if settings.HAWT_name is None: 
+                HAWT_name = f'HAWT_R{blade_df["pos"].iloc[-1]}_n{settings.HAWT_n}_H{settings.HAWT_H}'
+            else:
+                HAWT_name = settings.HAWT_name
+            HAWT_run_dir = f'{cwd}/run/{HAWT_name}'
+
+            os.system(f'rm -r {HAWT_run_dir}') # test line!!!
+
+            command_list = [
+                f'cp -r {cwd}/templates/template_HAWT {cwd}/run/template_HAWT && mv {cwd}/run/template_HAWT {HAWT_run_dir}',
+                f'cp {cwd}/geometry/{HAWT_name}/*.stl {HAWT_run_dir}/constant/triSurface'
+            ]
+                        
+            for command in command_list: run_cmd(command)
+
+            mesh.create_HAWT_tunel_blockMeshDict(f'{HAWT_run_dir}/system', R, settings.HAWT_H, 20, 30, 10)

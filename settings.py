@@ -16,7 +16,7 @@ AoA_range = np.arange(0,4,1)
 mapFields = True # Implements mapping from previous AoA results [True, False]
 parallel = True # Implements parallel computation: [True, False]
 NP = 2 # Number of processors for parallelisation
-meshing_type = 'blockMesh' # Type of an airfoil meshing strategy. Types available -> see meshing_type_list
+meshing_type = 'cfMesh' # Type of an airfoil meshing strategy. Types available -> see meshing_type_list
 
 # PHYSICS SETTINGS
 ro = 1.293 # kg/m3 - Air denisty
@@ -39,6 +39,11 @@ sav_d_shaft = 0.1
 sav_d_in = 1.8
 sav_d_out = 2
 sav_dist = 0.2
-
+# HAWT SETTINGS 
+HAWT_name = None # Name of the case in run directory
+HAWT_H = 5 # Height of the wind turbine tower. Height from the ground to a hub center
+HAWT_n = 3 # Number of blades of the wind turbine
+HAWT_L_hub = 4 # Length of the wind turbine hub
+HAWT_r_hub = 0.75 # Radius of a wind turbine hub
 
 

@@ -386,3 +386,383 @@ edges
     // ************************************************************************* //																
                                                                     			               	
     """)
+
+def create_simple_blockMeshDict(boundaries_list: list, path: str, divion_list = (10,10,10), grading_list = (1,1,1)):
+    # Creates simple one block blockMeshDict
+    # Serves as a template for more advanced functions 
+    #
+    #                                  up
+    #                               (patch)
+    #                           *---------------*
+    #   Y                       |               |
+    #   ^    Z                  |               |
+    #   |   /        left ->    |     front     | <- right      
+    #   |  /         (patch)    |    (patch)    |   (patch)            
+    #   | /                     |               |
+    #   |/                      *---------------*
+    #   |---------> X                 down
+    #                                (patch)
+    ''' Vertices_df explenation
+        x_min = boundaries_list[0]
+        x_max = boundaries_list[1]
+        y_min = boundaries_list[2]
+        y_max = boundaries_list[3]
+        z_min = boundaries_list[4]
+        z_max = boundaries_list[5]
+    '''
+    vertices_df = pd.DataFrame()
+    vertices_df['start'] = ["(","(","(","(","(","(","(","("]
+    vertices_df['X'] = np.array([boundaries_list[0],boundaries_list[1],boundaries_list[1],boundaries_list[0],boundaries_list[0],boundaries_list[1],boundaries_list[1],boundaries_list[0]])
+    vertices_df['Y'] = np.array([boundaries_list[2],boundaries_list[2],boundaries_list[3],boundaries_list[3],boundaries_list[2],boundaries_list[2],boundaries_list[3],boundaries_list[3]])
+    vertices_df['Z'] = np.array([boundaries_list[4],boundaries_list[4],boundaries_list[4],boundaries_list[4],boundaries_list[5],boundaries_list[5],boundaries_list[5],boundaries_list[5]])
+    vertices_df['end'] = [")",")",")",")",")",")",")",")"]
+    print(vertices_df)
+
+    file = open(f'{path}', "w+")
+    file.write("""/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  7
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/																
+FoamFile																
+{																
+    version     2.0;																
+    format      ascii;																
+    class       dictionary;																
+    object      blockMeshDict;																
+}																
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+															
+scale 1;														
+                                                                
+geometry																
+{																
+}	
+
+vertices
+(
+               															
+	""")
+    file.close 
+
+    file =  open(f'{path}', "a+")
+    file.write(vertices_df.to_string(header=False, index=False))
+    file.write("""
+);
+""")
+    file.close 
+
+    file =  open(f'{path}', "a+")
+    file.write(f"""     
+blocks
+(
+hex (0 1 2 3 4 5 6 7) ({divion_list[0]} {divion_list[1]} {divion_list[2]}) simpleGrading ({grading_list[0]} {grading_list[1]} {grading_list[2]})
+);
+""")
+    file.close
+    file =  open(f'{path}', "a+")
+    file.write("""
+edges
+(
+);
+
+boundary
+(
+    up
+    {
+        type patch;
+        faces
+        (
+            (3 7 6 2)
+        );
+    }
+    down
+    {
+        type patch;
+        faces
+        (
+            (1 5 4 0)
+        );
+    }     
+    left
+    {
+        type patch;
+        faces
+        (
+            (0 4 7 3)
+        );
+    }
+    right
+    {
+        type patch;
+        faces
+        (
+            (2 6 5 1)
+        );
+    }
+    front
+    {
+        type wall;
+        faces
+        (
+            (0 3 2 1)
+        );
+    }
+    back
+    {
+        type patch;
+        faces
+        (
+            (4 5 6 7)
+        );
+    }
+);
+// ************************************************************************* //																
+""")
+    
+
+def create_ground_tunel_blockMeshDict(boundaries_list: list, path: str, divion_list = (10,10,10), grading_list = (1,1,1)):
+    # Creates blockMeshDict for aerodynamic simulation over ground. Serves as a base for later snappyHexMesh usage
+    #
+    #                                  atm
+    #                                 (wall)
+    #                           *---------------*
+    #   Y                       |               |
+    #   ^    Z                  |               |
+    #   |   /        inlet ->   |      atm      | <- outlet      
+    #   |  /         (patch)    |     (wall)    |   (patch)            
+    #   | /                     |               |
+    #   |/                      *---------------*
+    #   |---------> X                 ground
+    #                                 (wall)
+    ''' Vertices_df explenation
+        x_min = boundaries_list[0]
+        x_max = boundaries_list[1]
+        y_min = boundaries_list[2]
+        y_max = boundaries_list[3]
+        z_min = boundaries_list[4]
+        z_max = boundaries_list[5]
+    '''
+    vertices_df = pd.DataFrame()
+    vertices_df['start'] = ["(","(","(","(","(","(","(","("]
+    vertices_df['X'] = np.array([boundaries_list[0],boundaries_list[1],boundaries_list[1],boundaries_list[0],boundaries_list[0],boundaries_list[1],boundaries_list[1],boundaries_list[0]])
+    vertices_df['Y'] = np.array([boundaries_list[2],boundaries_list[2],boundaries_list[3],boundaries_list[3],boundaries_list[2],boundaries_list[2],boundaries_list[3],boundaries_list[3]])
+    vertices_df['Z'] = np.array([boundaries_list[4],boundaries_list[4],boundaries_list[4],boundaries_list[4],boundaries_list[5],boundaries_list[5],boundaries_list[5],boundaries_list[5]])
+    vertices_df['end'] = [")",")",")",")",")",")",")",")"]
+    print(vertices_df)
+
+    file = open(f'{path}', "w+")
+    file.write("""/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  7
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/																
+FoamFile																
+{																
+    version     2.0;																
+    format      ascii;																
+    class       dictionary;																
+    object      blockMeshDict;																
+}																
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+															
+scale 1;														
+                                                                
+geometry																
+{																
+}	
+
+vertices
+(
+               															
+	""")
+    file.close 
+
+    file =  open(f'{path}', "a+")
+    file.write(vertices_df.to_string(header=False, index=False))
+    file.write("""
+);
+""")
+    file.close 
+
+    file =  open(f'{path}', "a+")
+    file.write(f"""     
+blocks
+(
+hex (0 1 2 3 4 5 6 7) ({divion_list[0]} {divion_list[1]} {divion_list[2]}) simpleGrading ({grading_list[0]} {grading_list[1]} {grading_list[2]})
+);
+""")
+    file.close
+    file =  open(f'{path}', "a+")
+    file.write("""
+edges
+(
+);
+
+boundary
+(
+    inlet
+    {
+        type patch;
+        faces
+        (
+            (0 4 7 3)
+        );
+    }
+    outlet
+    {
+        type patch;
+        faces
+        (
+            (2 6 5 1)
+        );
+    }
+    ground
+    {
+        type wall;
+        faces
+        (
+            (1 5 4 0)
+        );
+    } 
+    atm
+    {
+        type wall;
+        faces
+        (
+            (3 7 6 2)
+            (0 3 2 1)
+            (4 5 6 7)
+        );
+    }
+);
+// ************************************************************************* //																
+""")
+
+def create_HAWT_tunel_blockMeshDict(path: str, R: int, H: int, scale_x_in: int , 
+                                    scale_x_out: int, scale_y_z: int, boundaries_list = (-1,1,-1,1,-1,1), divion_list = (10,10,10), grading_list = (1,1,1)):
+    # Creates blockMeshDict for HAWT simulation. Serves as a base for later snappyHexMesh usage
+    #
+    #                                               atm
+    #                                              (wall)
+    #                           *---------------------------------------------*
+    #   Y                       |                                             |
+    #   ^    Z                  |                     \ /                     |
+    #   |   /        inlet ->   |                      o                      | <- outlet      
+    #   |  /        (patch)     |                     /|\                     |   (patch)            
+    #   | /                     |                      |                      |
+    #   |/                      *---------------------------------------------*
+    #   |---------> X                               ground
+    #                                               (wall)
+    
+    x_min = boundaries_list[0] * scale_x_in * R
+    x_max = boundaries_list[1] * scale_x_out * R
+    y_min = boundaries_list[2] * scale_y_z * R
+    y_max = boundaries_list[3] * scale_y_z * R
+    z_min = - H
+    z_max = boundaries_list[5] * scale_y_z * R
+
+    vertices_df = pd.DataFrame()
+    vertices_df['start'] = ["(","(","(","(","(","(","(","("]
+    vertices_df['X'] = np.array([x_min, x_max, x_max, x_min, x_min, x_max, x_max, x_min])
+    vertices_df['Y'] = np.array([y_min, y_min, y_max, y_max, y_min, y_min, y_max, y_max])
+    vertices_df['Z'] = np.array([z_min, z_min, z_min, z_min, z_max, z_max, z_max, z_max])
+    vertices_df['end'] = [")",")",")",")",")",")",")",")"]
+
+    file = open(f'{path}/blockMeshDict', "w+")
+    file.write("""/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  7
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/																
+FoamFile																
+{																
+    version     2.0;																
+    format      ascii;																
+    class       dictionary;																
+    object      blockMeshDict;																
+}																
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+															
+scale 1;														
+                                                                
+geometry																
+{																
+}	
+
+vertices
+(
+               															
+	""")
+    file.close 
+
+    file =  open(f'{path}/blockMeshDict', "a+")
+    file.write(vertices_df.to_string(header=False, index=False))
+    file.write("""
+);
+""")
+    file.close 
+
+    file =  open(f'{path}/blockMeshDict', "a+")
+    file.write(f"""     
+blocks
+(
+hex (0 1 2 3 4 5 6 7) ({divion_list[0]} {divion_list[1]} {divion_list[2]}) simpleGrading ({grading_list[0]} {grading_list[1]} {grading_list[2]})
+);
+""")
+    file.close
+    file =  open(f'{path}/blockMeshDict', "a+")
+    file.write("""
+edges
+(
+);
+
+boundary
+(
+    inlet
+    {
+        type patch;
+        faces
+        (
+            (0 4 7 3)
+        );
+    }
+    outlet
+    {
+        type patch;
+        faces
+        (
+            (2 6 5 1)
+        );
+    }
+    ground
+    {
+        type wall;
+        faces
+        (
+            (1 5 4 0)
+        );
+    } 
+    atm
+    {
+        type wall;
+        faces
+        (
+            (3 7 6 2)
+            (0 3 2 1)
+            (4 5 6 7)
+        );
+    }
+);
+// ************************************************************************* //																
+""")
+

@@ -1,0 +1,12 @@
+pos,c,twist,airfoil,color
+0,1,0,NACA0010,red
+0.2,1,0,NACA0010,green
+0.4,1,0,NACA0010,yellow
+0.6,1,0,NACA0010,black
+0.8,1,0,NACA0010,blue
+1,1,0,NACA0010,orange
+1.2,1,0,NACA0010,red
+1.4,1,0,NACA0010,green
+1.6,1,0,NACA0010,yellow
+1.8,1,0,NACA0010,black
+2,1,0,NACA0010,blue

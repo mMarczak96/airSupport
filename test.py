@@ -14,24 +14,21 @@ import VAWT
 import postProc
 from airfoil import Airfoil
 import settings
+import mesh     
 
-def create_blade_mesh(x, y, z, radius=1.0, num_blades=1):
-    # Create a PyVista PolyData object from X, Y, Z coordinates of the airfoil
-    airfoil_points = np.column_stack((x, y, z))
-    airfoil_mesh = pv.PolyData(airfoil_points)
+# mesh.create_HAWT_tunel_blockMeshDict('templates/template_HAWT/system/blockMeshDict', 10, 15, 10, 20, 10)
 
-    # Create a circular pattern of blades
-    angle = np.linspace(0, 2 * np.pi, num_blades, endpoint=False)
-    blade_mesh = pv.PolyData()
+plot = pv.Plotter()
+cylinder1 = pv.Cylinder(height=3).triangulate()
+cylinder2 = pv.Cylinder(direction=(0,1,0), height=3).triangulate()
+union = cylinder1.boolean_union(cylinder2)
 
+# plot.add_mesh(cylinder1, color='red', opacity=0.5)
+# plot.add_mesh(cylinder2, color='green', opacity=0.5)
+plot.add_mesh(union,style='wireframe')
+plot.show()
 
-    airfoil_mesh.points[:, :2] *= radius
-    airfoil_mesh.translate([0, 0, radius])
-
-    blade_mesh = airfoil_mesh
-
-    return blade_mesh
-
+'''
 z = 0
 p1 = [0,0,z]
 p2 = [0.5, -0.5, z]
@@ -173,3 +170,5 @@ def generate_blade_mesh(blade_df,airfoil_dict):
 
 
     return 
+
+'''

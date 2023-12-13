@@ -1,8 +1,0 @@
-Using: OpenFOAM-2212 (2212) - visit www.openfoam.com
-Build: _70874860-20230612 (patch=230612)
-
-Expected 0 arguments but found 1
-
-See 'reconstructPar -help' for usage
- or 'reconstructPar -help-full' for extended usage
-

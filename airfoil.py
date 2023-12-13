@@ -79,23 +79,23 @@ class Airfoil:
         foil_Pts['X'] = (1 - np.cos(foil_Pts['rad'])) / 2
         foil_Pts['Y'] = -T / 0.2 *( a0 * pow(foil_Pts['X'],0.5) + a1 * foil_Pts['X'] + a2 * pow(foil_Pts['X'],2) + a3 * pow(foil_Pts['X'],3) + a4 * pow(foil_Pts['X'],4) )
         foil_Pts['Z'] = 0
-        foil_Pts = foil_Pts[::-1]
+        # foil_Pts = foil_Pts[::-1]
 
         return foil_Pts
 
     def roundedTE(self, nT, sT, eT, foilDF):
         degTE = eT - sT
         delta_degTE = degTE / nT 
-        lst_degTE = np.arange(start = sT, stop = eT + 0.0001, step = delta_degTE)
+        lst_degTE = np.arange(sT, eT + 0.0001, delta_degTE)
         TE_Pts = pd.DataFrame(lst_degTE, columns = ['deg'])
-        TE_Pts['rad'] = TE_Pts['deg'] * 0.0174532925
+        TE_Pts['rad'] = np.deg2rad(TE_Pts['deg']) 
         TE_Pts['X'] = np.sin(TE_Pts['rad']) * ((foilDF['Y'].iloc[-2] + foilDF['Y'].iloc[-1])/2) + ((foilDF['X'].iloc[-2] + foilDF['X'].iloc[-1])/2)
-        TE_Pts['Y'] = np.cos(TE_Pts['rad']) * 0.00189
+        TE_Pts['Y'] = np.cos(TE_Pts['rad']) * (foilDF['Y'].iloc[-2] + foilDF['Y'].iloc[-1])/2
         TE_Pts.iat[-1,3] = 0.0
         TE_Pts['Z'] = 0
         
         return TE_Pts
-
+    
     # 5 Digit asymmetric airfoil
 
 
@@ -103,8 +103,6 @@ class Airfoil:
     def mergeFoilPts(self, plusPts, minPts):
 
         PTS = pd.concat([plusPts, minPts])    
-        print('PTS')
-        print(PTS)
         PTS_pv = np.column_stack((PTS['X'], PTS['Y'], PTS['Z']))
 
         return PTS_pv, PTS

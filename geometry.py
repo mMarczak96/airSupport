@@ -15,6 +15,7 @@ from tenacity import retry
 import pathlib
 from icecream import ic
 from pathlib import Path
+import settings
 
 cwd = os.getcwd()
 center = [0,0,0]
@@ -227,32 +228,6 @@ def VAWT_domain(d: float, x_in_fac: float, x_out_fac: float, y_fac: float, name:
     fDomain.write(dOutlet)
     fDomain.close()
 
-
-
-
-
-# def group_STL_domain(STL_list: list, path: str):
-#     print(f'Components of the computational domain: {STL_list}')
-#     #Reading STL components
-#     STL_dict = {}
-#     STL_part_list = []
-#     for part in STL_list:
-#         print(f'processing part {part}')
-#         STL_dict[f'f{part}'] = open(f'{path}/{part}.stl', 'r')
-#         STL_list_element = list(STL_dict.keys())[-1]
-#         ic(STL_list_element)
-#         STL_part_list.append(STL_list_element)
-#         # element = Path(f'{path}/{STL_part_list[-1]}.stl')
-#         # ic(element)
-#         STL_dict[f'd{part}'] = element.read()
-#         STL_dict.keys()[-2].close()
-     
-#     print(STL_dict)
-#     print(STL_list)
-
-abc = ['inlet', 'outlet', 'sides', 'rotor']
-
-
 def groupedSTLdomain(airfoil: str, inlet: str, sides: str, outlet: str):
     copyFoil = f'cp {cwd}/geometry/{airfoil}.stl {cwd}/geometry/domain_{airfoil}.stl'
     run_cmd(copyFoil)
@@ -364,8 +339,133 @@ def darrieusVAWT(name: str, foil, r, R, n):
 
     return VAWT3D 
 
-# def regionSTLgen (STL_lst: list):
-#     for i in STL_lst:
+def generate_circular_airfoil(r: float, resolution: int):
+    circular_foil_df = pd.DataFrame()
+    circular_foil_df['deg'] = np.linspace(0,360,resolution)
+    circular_foil_df['rad'] = np.deg2rad(circular_foil_df['deg'])
+    circular_foil_df['X'] = np.cos(circular_foil_df['rad']) * r + settings.c / 2
+    circular_foil_df['Y'] = np.sin(circular_foil_df['rad']) * r
+    circular_foil_df['Z'] = 0
 
+    return circular_foil_df
 
+# def generate_blade_mesh(blade_df,airfoil_dict):
+#     # Generates blade mesh in .stl format
+#     # Requires: 
+#     # blade_df -> data frame with general blade information: position of an airfoil, chord, twist, airfoil name
+#     # airfoil_dict -> dictionary containing data frames with coordinates for every airfoil used in a blade
+#     blade_mesh = pv.PolyData()
+#     for index, column in blade_df.iterrows():
+#         foil = blade_df.loc[index].at['airfoil']
+
+#         for foil in airfoil_dict.keys():
+#             airfoil_df = airfoil_dict[f'{foil}']
+#             airfoil_mesh = pv.PolyData(np.column_stack((airfoil_df['X'],airfoil_df['Y'],airfoil_df['Z'])))
+#             airfoil_mesh_element_scaled = airfoil_mesh.scale([blade_df.loc[index].at['c'],blade_df.loc[index].at['c'],1])
+#             airfoil_mesh_element_rotated = airfoil_mesh_element_scaled.rotate_z(blade_df.loc[index].at['twist'] ,point = [0.5,0,0])
+#             airfoil_mesh_element_translated = airfoil_mesh_element_rotated.translate([0,0,[blade_df.loc[index].at['pos']][0]])
+#             blade_mesh = blade_mesh.merge(airfoil_mesh_element_translated)
+   
+#     blade_volume = blade_mesh.delaunay_3d(alpha=3, tol=0.5, offset=2.5, progress_bar=True)
+#     blade_shell = blade_volume.extract_surface(pass_pointid=False, pass_cellid=False)
+
+#     return blade_shell
+
+def generate_blade_mesh(blade_df,airfoil_dict, path):
+    # Generates blade mesh in .stl format
+    # Requires: 
+    # blade_df -> data frame with general blade information: position of an airfoil, chord, twist, airfoil name
+    # airfoil_dict -> dictionary containing data frames with coordinates for every airfoil used in a blade
+
+    blade_mesh = pv.PolyData()
+    scale_factor = 5
+    # plot = pv.Plotter() ## -> activate for plotting
+
+    # Scalling foil data frames
+    for foil_df in airfoil_dict.values():
+        foil_df['X'] = foil_df['X'] * scale_factor
+        foil_df['Y'] = foil_df['Y'] * scale_factor
+    # Starting blade element generation 
+    for index, column in blade_df.iterrows():
+
+        foil = blade_df.loc[index].at['airfoil'] 
+        airfoil_df = airfoil_dict[f'{foil}']
+        airfoil_mesh = pv.PolyData(np.column_stack((airfoil_df['X'],airfoil_df['Y'],airfoil_df['Z'])))
+        te_mesh = pv.PolyData(pv.CircularArc(
+            [airfoil_df['X'].iloc[-1],airfoil_df['Y'].iloc[-1],0],
+            [airfoil_df['X'].iloc[-1],airfoil_df['Y'].iloc[-1] * (-1),0],
+            [airfoil_df['X'].iloc[-1],0,0], resolution=20, negative=True))
+        # airfoil_mesh = airfoil_mesh.merge(te_mesh)
+        
+        if foil != 'circular':
+            airfoil_mesh_element_scaled = airfoil_mesh.scale([blade_df.loc[index].at['c'],blade_df.loc[index].at['c'],1])
+            airfoil_mesh_element_rotated = airfoil_mesh_element_scaled.rotate_z(blade_df.loc[index].at['twist'] ,point = [(airfoil_df['X'].iloc[1] + airfoil_df['X'].iloc[-1]) / 2,0,0])
+        else:
+            airfoil_mesh_element_scaled = airfoil_mesh.scale([1,blade_df.loc[index].at['c'],1], inplace=True)
+            airfoil_mesh_element_rotated = airfoil_mesh_element_scaled
+
+        airfoil_mesh_element_translated = airfoil_mesh_element_rotated.translate([0,0,[blade_df.loc[index].at['pos']][0] * scale_factor]) 
+        blade_mesh = blade_mesh.merge(airfoil_mesh_element_translated)
+        # plot.add_mesh(airfoil_mesh_element_translated, color=blade_df['color'].iloc[index], label=f'{index}: {foil}') ## plotting final elements fo the blade for debbuing
+
+    # Final operations: blade generation and saving
+    blade_volume = blade_mesh.delaunay_3d(alpha=3, tol=1e-12, offset=2.5, progress_bar=True)
+    blade_shell = blade_volume.extract_surface(pass_pointid=False, pass_cellid=False)
+    blade_shell = blade_shell.scale(1/scale_factor,1/scale_factor,1)
+    blade_shell.save(f'{path}/blade.stl')
+    # plot.add_legend() ## -> activate for plotting
+    # plot.show() ## -> activate for plotting
+
+    return blade_shell
+
+def generate_turbine_geometry(path: str,blade_shell, n: int,r_hub: float, L_hub: float, r_tower: float, H_tower: float):
+    # Generates rotor mesh in .stl format
+    # Requires:
+    # blade_shell -> surface ot a blade obtained from generate_blade_mesh() function
+    # n -> number of blades, r_hub -> radius of a hub, L_hub -> lenght of a hub, r_tower -> radius of a tower, H_tower -> height of a tower
+    # os.system(f'mkdir -p {pwd}/geometry/{name}')
+    # Rotor generation 
+    rotor_dict = {}
+    blade_shell = blade_shell.rotate_z(180, point=[0.5,0,0])
+    for blade in np.arange(0,360,360/n):
+        rotor_dict[f'blade{int(blade)}'] = blade_shell.rotate_x(blade, point=[0.5,0,0])
+    rotor = rotor_dict['blade0']
+    for i, key in enumerate(rotor_dict.keys()):
+        if i > 0:
+            rotor = rotor.merge(rotor_dict[f'{key}'])
+    rotor_bounds = rotor.bounds
+    # Tower generation
+    tower_base1 = pv.Circle(radius=r_tower)
+    tower_base2 = tower_base1.translate([0,0,-H_tower])
+    tower_tube = pv.Tube(pointa=(0,0,0), pointb=(0,0,-H_tower),resolution=H_tower*10,radius=r_tower,n_sides=100)
+    tower = tower_base1.merge([tower_base2, tower_tube])
+    # Hub generation
+    hub_base = pv.Circle(radius=r_hub, resolution=100)
+    hub_tube = pv.Tube(pointa=(0,0,0), pointb=(0,0,L_hub),resolution=L_hub*10,radius=r_hub,n_sides=100)
+    hub_dome = pv.Sphere(center=[0,0,L_hub], direction=[0,0,-1], radius=r_hub, end_phi=90, theta_resolution=100)
+    hub = hub_base.merge([hub_dome, hub_tube])
+    hub = hub.rotate_y(90, point=[0,0,0])
+    hub = hub.translate([-L_hub/2,0,0])
+
+    #Saving operations
+    turbine = rotor.merge([tower, hub])
+    turbine_dict = {
+        'rotor': rotor,
+        'tower': tower,
+        'hub': hub,
+        'turbine': turbine
+    }
+    for key, value in turbine_dict.items():
+        value.save(f'{path}/{key}.stl')
+
+    return turbine, rotor_bounds
+
+def generete_AMI_HAWT_cylinder(path: str, R: int, rotor_bounds: list):
+    # Generetes a cylinder in .stl format that is later used for splitting mesh into stationary and moving zones
+    # Requires: R -> wind turbine rotor radius, rotor_bounds -> list of a max and min X,Y,Z coordinates of a rotor
+    rotor_domain = pv.Cylinder(center=[0,0,0], direction=[1,0,0], radius=R*1.5, height=2) #(rotor_bounds[1]-rotor_bounds[0])*3)
+    rotor_domain = rotor_domain.translate([1,0,0])
+    rotor_domain.save(f'{path}/rotor_domain.stl')
+
+    return rotor_domain
 

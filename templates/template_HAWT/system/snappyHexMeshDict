@@ -1,0 +1,178 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2212                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      snappyHexMeshDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+// Which of the steps to run
+castellatedMesh true;
+snap            true;
+addLayers       false;
+
+geometry
+{
+    rotor.stl
+    {
+        type triSurfaceMesh;
+        name rotor;
+    }
+    hub.stl
+    {
+        type triSurfaceMesh;
+        name hub;
+    }
+    tower.stl
+    {
+        type triSurfaceMesh;
+        name tower;
+    }
+    rotor_domain.stl
+    tower.stl
+    {
+        type triSurfaceMesh;
+        name AMI;
+    }
+}
+
+
+// Settings for the castellatedMesh generation.
+castellatedMeshControls
+{
+
+    maxLocalCells 100000;
+
+    maxGlobalCells 2000000;
+
+    minRefinementCells 10;
+
+    maxLoadUnbalance 0.10;
+
+    nCellsBetweenLevels 3;
+
+
+    features
+    (
+        { file "rotor.eMesh"; level 2;} 
+        { file "hub.eMesh"; level 2;} 
+        { file "tower.eMesh"; level 1;}
+        { file "rotor_domain.eMesh"; level 0;}
+    );
+
+
+    refinementSurfaces
+    {
+        rotor	{ level (2 2);} 
+        hub	{ level (0 0);}
+        tower	{ level (0 0);}
+        AMI
+        {
+            level (2 2);
+            faceType boundary;
+            cellZone rotatingZone;
+            faceZone rotatingZone;
+            cellZoneInside inside;
+        }
+
+    }
+
+    // Resolve sharp angles
+    resolveFeatureAngle 30;
+
+    refinementRegions
+    {
+        // Note: for better mesh quality utilize this refinement region
+        // AMI{ mode inside; levels ((1E15 3));}
+    }
+
+
+    locationInMesh (-1 -1 0.05);
+
+    allowFreeStandingZoneFaces false;
+}
+
+// Settings for the snapping.
+snapControls
+{
+    nSmoothPatch 3;
+    tolerance 4.0;
+    nSolveIter 300;
+    nRelaxIter 5;
+    nFeatureSnapIter 10;
+    implicitFeatureSnap true;
+    explicitFeatureSnap false;
+    multiRegionFeatureSnap true;
+}
+
+
+
+// Settings for the layer addition.
+addLayersControls
+{
+    relativeSizes true;
+
+    layers
+    {
+    	
+    }
+
+    expansionRatio 1.0;
+    finalLayerThickness 0.3;
+    minThickness 0.1;
+    nGrow 0;
+    featureAngle 30;
+    nRelaxIter 3;
+    nSmoothSurfaceNormals 1;
+    nSmoothNormals 3;
+    nSmoothThickness 10;
+    maxFaceThicknessRatio 0.5;
+    maxThicknessToMedialRatio 0.3;
+    minMedialAxisAngle 90;
+    nBufferCellsNoExtrude 0;
+    nLayerIter 50;
+}
+
+
+
+// Generic mesh quality settings. At any undoable phase these determine
+// where to undo.
+meshQualityControls
+{
+    #include "meshQualityDict"
+
+
+    // Advanced
+
+    //- Number of error distribution iterations
+    nSmoothScale 4;
+    //- Amount to scale back displacement at error points
+    errorReduction 0.75;
+}
+
+
+// Advanced
+
+// Write flags
+writeFlags
+(
+    scalarLevels
+    layerSets
+    layerFields     // write volScalarField for layer coverage
+);
+
+
+// Merge tolerance. Is fraction of overall bounding box of initial mesh.
+// Note: the write tolerance needs to be higher than this.
+mergeTolerance 1e-6;
+
+
+// ************************************************************************* //
